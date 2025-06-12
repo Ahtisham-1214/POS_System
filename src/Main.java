@@ -1,6 +1,11 @@
+import View.MainFrame;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello and welcome!");
-
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new MainFrame("POS-System Login");
+            }
+        });
     }
 }
