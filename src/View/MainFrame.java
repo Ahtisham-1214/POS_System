@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Objects;
 import javax.swing.JOptionPane;
 
 public class MainFrame extends JFrame {
@@ -12,13 +13,31 @@ public class MainFrame extends JFrame {
     private CardLayout cardLayout;
     private JPanel mainPanel;
 
+    // Define application constants
+    private static final String APP_NAME = "POS System";
+    private static final String APP_VERSION = "1.0";
+    private static final Dimension MIN_SIZE = new Dimension(900, 650);
+
     public MainFrame(String title) {
-        this.setTitle(title);
-        this.setPreferredSize(new Dimension(800, 600));
-        this.setExtendedState(Frame.MAXIMIZED_BOTH);
+        // Set the application title with a version
+        this.setTitle(APP_NAME + " " + APP_VERSION + " - " + title);
+
+        // Set window properties
+        this.setPreferredSize(new Dimension(900, 650));
+        this.setMinimumSize(MIN_SIZE);
+//        this.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        // Create main panel with CardLayout for switching between login and dashboard
+        // Try to set the application icon if available
+        try {
+            ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/app_icon.png")));
+            this.setIconImage(icon.getImage());
+        } catch (Exception e) {
+            // If icon not available, continue without it
+            System.out.println("App icon not found, using default.");
+        }
+
+        // Create the main panel with CardLayout for switching between login and dashboard
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
         this.add(mainPanel, BorderLayout.CENTER);
@@ -31,7 +50,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(loginPanel, "login");
         mainPanel.add(dashboardPanel, "dashboard");
 
-        // Show login panel by default
+        // Show the login panel by default
         cardLayout.show(mainPanel, "login");
 
         this.addWindowListener(new WindowAdapter() {
