@@ -2,17 +2,15 @@ package View;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class DashboardPanel extends JPanel {
     private JPanel contentPanel;
     private JPanel sidebarPanel;
     private CardLayout cardLayout;
 
-    // Placeholder panels for different sections
+    // Panels for different sections
     private JPanel homePanel;
-    private JPanel inventoryPanel;
+    private ProductPanel inventoryPanel;
     private JPanel salesPanel;
     private JPanel reportsPanel;
     private JPanel settingsPanel;
@@ -30,7 +28,6 @@ public class DashboardPanel extends JPanel {
         // Create sidebar
         createSidebar();
 
-        // Create content panel with CardLayout
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
 
@@ -44,7 +41,7 @@ public class DashboardPanel extends JPanel {
         contentPanel.add(reportsPanel, "reports");
         contentPanel.add(settingsPanel, "settings");
 
-        // Show home panel by default
+        // Show a home panel by default.
         cardLayout.show(contentPanel, "home");
 
         // Add sidebar and content panel to dashboard
@@ -76,32 +73,28 @@ public class DashboardPanel extends JPanel {
         addSidebarButton("Reports", "reports");
         addSidebarButton("Settings", "settings");
 
-        // Add logout button at the bottom
         sidebarPanel.add(Box.createVerticalGlue());
         JButton logoutButton = createStyledButton("Logout");
-        logoutButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Handle logout
-                if (parentFrame != null) {
-                    // Show confirmation dialog
-                    int confirmResult = JOptionPane.showConfirmDialog(
-                        DashboardPanel.this,
-                        "Are you sure you want to logout?",
-                        "Logout Confirmation",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE
-                    );
+        logoutButton.addActionListener(e -> {
+            // Handle logout
+            if (parentFrame != null) {
+                // Show confirmation dialog
+                int confirmResult = JOptionPane.showConfirmDialog(
+                    DashboardPanel.this,
+                    "Are you sure you want to logout?",
+                    "Logout Confirmation",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
 
-                    if (confirmResult == JOptionPane.YES_OPTION) {
-                        parentFrame.showLogin();
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(DashboardPanel.this, 
-                        "Logout functionality not available in this context.", 
-                        "Logout", 
-                        JOptionPane.INFORMATION_MESSAGE);
+                if (confirmResult == JOptionPane.YES_OPTION) {
+                    parentFrame.showLogin();
                 }
+            } else {
+                JOptionPane.showMessageDialog(DashboardPanel.this,
+                    "Logout functionality not available in this context.",
+                    "Logout",
+                    JOptionPane.INFORMATION_MESSAGE);
             }
         });
         sidebarPanel.add(logoutButton);
@@ -109,9 +102,11 @@ public class DashboardPanel extends JPanel {
 
     private void addSidebarButton(String text, String cardName) {
         JButton button = createStyledButton(text);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        button.addActionListener(e -> {
+            // Special handling for the Inventory button to ensure it shows the ProductPanel
+            if (text.equals("Inventory")) {
+                cardLayout.show(contentPanel, "inventory");
+            } else {
                 cardLayout.show(contentPanel, cardName);
             }
         });
@@ -139,12 +134,8 @@ public class DashboardPanel extends JPanel {
         homeLabel.setFont(new Font("Arial", Font.BOLD, 24));
         homePanel.add(homeLabel, BorderLayout.CENTER);
 
-        // Inventory Panel
-        inventoryPanel = new JPanel(new BorderLayout());
-        inventoryPanel.setBackground(Color.WHITE);
-        JLabel inventoryLabel = new JLabel("Inventory Management", SwingConstants.CENTER);
-        inventoryLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        inventoryPanel.add(inventoryLabel, BorderLayout.CENTER);
+        // Inventory Panel - Using ProductPanel for product management
+        inventoryPanel = new ProductPanel();
 
         // Sales Panel
         salesPanel = new JPanel(new BorderLayout());
