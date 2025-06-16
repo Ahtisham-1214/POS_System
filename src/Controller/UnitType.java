@@ -15,11 +15,19 @@ public class UnitType {
         this.setConversionToBaseUnit(conversionToBaseUnit);
     }
 
+    public UnitType(String name, float conversionToBaseUnit) {
+        this.setName(name);
+        this.setConversionToBaseUnit(conversionToBaseUnit);
+    }
+
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
+        if (id < 1) {
+            throw new IllegalArgumentException("Unit Type ID must be greater than 0");
+        }
         this.id = id;
     }
 
