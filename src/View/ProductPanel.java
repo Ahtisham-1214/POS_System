@@ -10,7 +10,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static Controller.Category.categories;
 import static Controller.Product.products;
 import static Controller.ProductVariant.productVariants;
 import static Controller.UnitType.unitTypes;
@@ -46,13 +45,6 @@ public class ProductPanel extends JPanel {
 
     // Category tab components
     private JPanel categoryPanel;
-    private JTextField categoryIdField;
-    private JTextField categoryNameField;
-    private JButton addCategoryButton;
-    private JButton updateCategoryButton;
-    private JButton deleteCategoryButton;
-    private JButton clearCategoryButton;
-    private JLabel categoryMessageLabel;
 
     // Unit Type tab components
     private JPanel unitTypePanel;
@@ -87,16 +79,10 @@ public class ProductPanel extends JPanel {
         // Example data for testing
 
         // Update combo boxes
-        updateCategoryComboBox();
+        new CategoryPanel().updateCategoryComboBox();
         updateUnitTypeComboBoxes();
     }
 
-    private void updateCategoryComboBox() {
-        categoryComboBox.removeAllItems();
-        for (Category category : categories) {
-            categoryComboBox.addItem(category.getName());
-        }
-    }
 
     private void updateUnitTypeComboBoxes() {
         unitTypeComboBox.removeAllItems();
@@ -147,7 +133,7 @@ public class ProductPanel extends JPanel {
         tabbedPane.addTab("Product Variants", variantPanel);
 
         // Create category panel
-        categoryPanel = createCategoryPanel();
+        categoryPanel = new CategoryPanel().getPanel();
         tabbedPane.addTab("Categories", categoryPanel);
 
         // Create a unit type panel
@@ -221,7 +207,7 @@ public class ProductPanel extends JPanel {
         gbc.anchor = GridBagConstraints.EAST;
         formPanel.add(categoryLabel, gbc);
 
-        categoryComboBox = new JComboBox<>();
+        categoryComboBox = CategoryPanel.getCategoryComboBox();
         categoryComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
         categoryComboBox.setToolTipText("Select the product category");
         gbc.gridx = 1;
@@ -432,105 +418,6 @@ public class ProductPanel extends JPanel {
         return panel;
     }
 
-    private JPanel createCategoryPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(BACKGROUND_COLOR);
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        // Create a form panel with a card-like appearance
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(PANEL_BACKGROUND);
-        formPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-            BorderFactory.createEmptyBorder(25, 30, 25, 30)
-        ));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Message label for feedback with improved styling
-        categoryMessageLabel = new JLabel("");
-        categoryMessageLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        categoryMessageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        formPanel.add(categoryMessageLabel, gbc);
-
-        // Create and style form fields
-        // ID field
-        JLabel idLabel = createStyledLabel("Category ID:");
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(idLabel, gbc);
-
-        categoryIdField = createStyledTextField();
-        categoryIdField.setEditable(false);
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(categoryIdField, gbc);
-
-        // Name field
-        JLabel nameLabel = createStyledLabel("Category Name:");
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(nameLabel, gbc);
-
-        categoryNameField = createStyledTextField();
-        categoryNameField.setToolTipText("Enter the category name");
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(categoryNameField, gbc);
-
-        // Buttons panel with improved styling
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        buttonPanel.setBackground(PANEL_BACKGROUND);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-
-        addCategoryButton = createStyledButton("Add");
-        addCategoryButton.setToolTipText("Add a new category");
-        addCategoryButton.setBackground(PRIMARY_COLOR);
-
-        updateCategoryButton = createStyledButton("Update");
-        updateCategoryButton.setToolTipText("Update the selected category");
-        updateCategoryButton.setBackground(SECONDARY_COLOR);
-
-        deleteCategoryButton = createStyledButton("Delete");
-        deleteCategoryButton.setToolTipText("Delete the selected category");
-        deleteCategoryButton.setBackground(new Color(220, 53, 69)); // Bootstrap danger red
-
-        clearCategoryButton = createStyledButton("Clear");
-        clearCategoryButton.setToolTipText("Clear all fields");
-        clearCategoryButton.setBackground(new Color(108, 117, 125)); // Bootstrap secondary gray
-
-        buttonPanel.add(addCategoryButton);
-        buttonPanel.add(updateCategoryButton);
-        buttonPanel.add(deleteCategoryButton);
-        buttonPanel.add(clearCategoryButton);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        formPanel.add(buttonPanel, gbc);
-
-        // Add action listeners
-        addCategoryButton.addActionListener(e -> addCategory());
-
-        updateCategoryButton.addActionListener(e -> updateCategory());
-
-        deleteCategoryButton.addActionListener(e -> deleteCategory());
-
-        clearCategoryButton.addActionListener(e -> clearCategoryFields());
-
-        panel.add(formPanel, BorderLayout.CENTER);
-        return panel;
-    }
 
     private JPanel createUnitTypePanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -711,9 +598,7 @@ public class ProductPanel extends JPanel {
         JLabel messageLabel;
         if (isProductTab) {
             messageLabel = productMessageLabel;
-        } else if (tabbedPane.getSelectedIndex() == 2) { // Category tab
-            messageLabel = categoryMessageLabel;
-        } else if (tabbedPane.getSelectedIndex() == 3) { // Unit Type tab
+        }  else if (tabbedPane.getSelectedIndex() == 3) { // Unit Type tab
             messageLabel = unitTypeMessageLabel;
         } else { // Variant tab
             messageLabel = variantMessageLabel;
@@ -1193,157 +1078,6 @@ public class ProductPanel extends JPanel {
         return Integer.parseInt(selected.split(" - ")[0]);
     }
 
-    // Category CRUD operations
-    private void addCategory() {
-        if (validateCategoryFields()) {
-            // Disable the button temporarily to prevent double submission
-            addCategoryButton.setEnabled(false);
-
-            // Show loading state
-            addCategoryButton.setText("Adding...");
-
-            try {
-                // Create a new category
-                String name = categoryNameField.getText().trim();
-
-                Category category = new Category(name);
-                categories.add(category);
-
-                // Update category combo box in the product tab
-                updateCategoryComboBox();
-
-                showMessage("Category added successfully!", "success", false);
-                clearCategoryFields();
-            } catch (Exception ex) {
-                showMessage("Error adding category: " + ex.getMessage(), "error", false);
-            } finally {
-                addCategoryButton.setText("Add");
-                addCategoryButton.setEnabled(true);
-            }
-        }
-    }
-
-    private void updateCategory() {
-        if (validateCategoryFields()) {
-            // Validate that ID is provided for update
-            if (categoryIdField.getText().trim().isEmpty()) {
-                showMessage("Please enter a category ID to update", "error", false);
-                highlightErrorField(categoryIdField);
-                return;
-            }
-
-            // Disable the button temporarily
-            updateCategoryButton.setEnabled(false);
-            updateCategoryButton.setText("Updating...");
-
-            try {
-                int id = Integer.parseInt(categoryIdField.getText().trim());
-                String name = categoryNameField.getText().trim();
-
-                // Find and update the category
-                boolean found = false;
-                for (int i = 0; i < categories.size(); i++) {
-                    if (categories.get(i).getId() == id) {
-                        categories.set(i, new Category(id, name));
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    // Update category combo box in the product tab
-                    updateCategoryComboBox();
-                    showMessage("Category updated successfully!", "success", false);
-                } else {
-                    showMessage("Category with ID " + id + " not found", "error", false);
-                }
-            } catch (Exception ex) {
-                showMessage("Error updating category: " + ex.getMessage(), "error", false);
-            } finally {
-                updateCategoryButton.setText("Update");
-                updateCategoryButton.setEnabled(true);
-            }
-        }
-    }
-
-    private void deleteCategory() {
-        if (categoryIdField.getText().trim().isEmpty()) {
-            showMessage("Please enter a category ID to delete", "error", false);
-            highlightErrorField(categoryIdField);
-            return;
-        }
-
-        // Show confirmation dialog
-        int result = JOptionPane.showConfirmDialog(
-            this,
-            "Are you sure you want to delete this category?",
-            "Confirm Delete",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-        );
-
-        if (result == JOptionPane.YES_OPTION) {
-            // Disable the button temporarily
-            deleteCategoryButton.setEnabled(false);
-            deleteCategoryButton.setText("Deleting...");
-
-            try {
-                int id = Integer.parseInt(categoryIdField.getText().trim());
-
-                // Find and remove the category
-                boolean found = false;
-                for (int i = 0; i < categories.size(); i++) {
-                    if (categories.get(i).getId() == id) {
-                        categories.remove(i);
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    // Update category combo box in the product tab
-                    updateCategoryComboBox();
-                    showMessage("Category deleted successfully!", "success", false);
-                    clearCategoryFields();
-                } else {
-                    showMessage("Category with ID " + id + " not found", "error", false);
-                }
-            } catch (Exception ex) {
-                showMessage("Error deleting category: " + ex.getMessage(), "error", false);
-            } finally {
-                deleteCategoryButton.setText("Delete");
-                deleteCategoryButton.setEnabled(true);
-            }
-        }
-    }
-
-    private void clearCategoryFields() {
-        // Clear all input fields
-        categoryIdField.setText("");
-        categoryNameField.setText("");
-
-        // Clear message only if it's not a success message
-        if (!categoryMessageLabel.getForeground().equals(SUCCESS_COLOR)) {
-            categoryMessageLabel.setText("");
-        }
-
-        // Set focus to ID field
-        categoryIdField.requestFocusInWindow();
-    }
-
-    private boolean validateCategoryFields() {
-        // Basic validation
-
-
-
-        if (categoryNameField.getText().trim().isEmpty()) {
-            showMessage("Category name cannot be empty", "error", false);
-            highlightErrorField(categoryNameField);
-            return false;
-        }
-
-        return true;
-    }
 
     // Unit Type CRUD operations
     private void addUnitType() {
