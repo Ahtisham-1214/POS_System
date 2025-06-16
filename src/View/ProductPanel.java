@@ -7,11 +7,13 @@ import Controller.UnitType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+
+import static Controller.Category.categories;
+import static Controller.Product.products;
+import static Controller.ProductVariant.productVariants;
+import static Controller.UnitType.unitTypes;
 
 public class ProductPanel extends JPanel {
     // UI Components
@@ -63,11 +65,6 @@ public class ProductPanel extends JPanel {
     private JButton clearUnitTypeButton;
     private JLabel unitTypeMessageLabel;
 
-    // Lists to store data
-    private ArrayList<Category> categories = new ArrayList<>();
-    private ArrayList<UnitType> unitTypes = new ArrayList<>();
-    private ArrayList<Product> products = new ArrayList<>();
-    private ArrayList<ProductVariant> productVariants = new ArrayList<>();
 
     // Define colors for better UI consistency
     private static final Color PRIMARY_COLOR = new Color(70, 130, 180); // Steel Blue
@@ -88,14 +85,6 @@ public class ProductPanel extends JPanel {
         // This is a placeholder for loading categories, unit types, products, and product variants
 
         // Example data for testing
-        categories.add(new Category(1, "Beverages"));
-        categories.add(new Category(2, "Bakery"));
-        categories.add(new Category(3, "Dairy"));
-
-        unitTypes.add(new UnitType(1, "Kilogram", 1.0f));
-        unitTypes.add(new UnitType(2, "Gram", 0.001f));
-        unitTypes.add(new UnitType(3, "Liter", 1.0f));
-        unitTypes.add(new UnitType(4, "Milliliter", 0.001f));
 
         // Update combo boxes
         updateCategoryComboBox();
@@ -132,7 +121,7 @@ public class ProductPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(BACKGROUND_COLOR);
 
-        // Create title panel with improved styling
+        // Create a title panel with improved styling
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(PRIMARY_COLOR);
         titlePanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -144,7 +133,7 @@ public class ProductPanel extends JPanel {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titlePanel.add(titleLabel, BorderLayout.CENTER);
 
-        // Create tabbed pane
+        // Create a tabbed pane
         tabbedPane = new JTabbedPane();
         tabbedPane.setFont(new Font("Arial", Font.PLAIN, 14));
         tabbedPane.setBackground(BACKGROUND_COLOR);
@@ -161,7 +150,7 @@ public class ProductPanel extends JPanel {
         categoryPanel = createCategoryPanel();
         tabbedPane.addTab("Categories", categoryPanel);
 
-        // Create unit type panel
+        // Create a unit type panel
         unitTypePanel = createUnitTypePanel();
         tabbedPane.addTab("Unit Types", unitTypePanel);
 
@@ -175,7 +164,7 @@ public class ProductPanel extends JPanel {
         panel.setBackground(BACKGROUND_COLOR);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Create a form panel with card-like appearance
+        // Create a form panel with a card-like appearance
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(PANEL_BACKGROUND);
         formPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -207,7 +196,7 @@ public class ProductPanel extends JPanel {
         formPanel.add(idLabel, gbc);
 
         productIdField = createStyledTextField();
-        productIdField.setToolTipText("Enter the product ID");
+        productIdField.setEditable(false);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(productIdField, gbc);
@@ -290,33 +279,13 @@ public class ProductPanel extends JPanel {
         formPanel.add(buttonPanel, gbc);
 
         // Add action listeners
-        addProductButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addProduct();
-            }
-        });
+        addProductButton.addActionListener(e -> addProduct());
 
-        updateProductButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateProduct();
-            }
-        });
+        updateProductButton.addActionListener(e -> updateProduct());
 
-        deleteProductButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deleteProduct();
-            }
-        });
+        deleteProductButton.addActionListener(e -> deleteProduct());
 
-        clearProductButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearProductFields();
-            }
-        });
+        clearProductButton.addActionListener(e -> clearProductFields());
 
         panel.add(formPanel, BorderLayout.CENTER);
         return panel;
@@ -327,7 +296,7 @@ public class ProductPanel extends JPanel {
         panel.setBackground(BACKGROUND_COLOR);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Create a form panel with card-like appearance
+        // Create a form panel with a card-like appearance
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(PANEL_BACKGROUND);
         formPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -359,7 +328,7 @@ public class ProductPanel extends JPanel {
         formPanel.add(idLabel, gbc);
 
         variantIdField = createStyledTextField();
-        variantIdField.setToolTipText("Enter the variant ID");
+        variantIdField.setEditable(false);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(variantIdField, gbc);
@@ -451,33 +420,13 @@ public class ProductPanel extends JPanel {
         formPanel.add(buttonPanel, gbc);
 
         // Add action listeners
-        addVariantButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addProductVariant();
-            }
-        });
+        addVariantButton.addActionListener(e -> addProductVariant());
 
-        updateVariantButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateProductVariant();
-            }
-        });
+        updateVariantButton.addActionListener(e -> updateProductVariant());
 
-        deleteVariantButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deleteProductVariant();
-            }
-        });
+        deleteVariantButton.addActionListener(e -> deleteProductVariant());
 
-        clearVariantButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearVariantFields();
-            }
-        });
+        clearVariantButton.addActionListener(e -> clearVariantFields());
 
         panel.add(formPanel, BorderLayout.CENTER);
         return panel;
@@ -488,7 +437,7 @@ public class ProductPanel extends JPanel {
         panel.setBackground(BACKGROUND_COLOR);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Create a form panel with card-like appearance
+        // Create a form panel with a card-like appearance
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(PANEL_BACKGROUND);
         formPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -520,7 +469,7 @@ public class ProductPanel extends JPanel {
         formPanel.add(idLabel, gbc);
 
         categoryIdField = createStyledTextField();
-        categoryIdField.setToolTipText("Enter the category ID");
+        categoryIdField.setEditable(false);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(categoryIdField, gbc);
@@ -571,33 +520,13 @@ public class ProductPanel extends JPanel {
         formPanel.add(buttonPanel, gbc);
 
         // Add action listeners
-        addCategoryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addCategory();
-            }
-        });
+        addCategoryButton.addActionListener(e -> addCategory());
 
-        updateCategoryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateCategory();
-            }
-        });
+        updateCategoryButton.addActionListener(e -> updateCategory());
 
-        deleteCategoryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deleteCategory();
-            }
-        });
+        deleteCategoryButton.addActionListener(e -> deleteCategory());
 
-        clearCategoryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearCategoryFields();
-            }
-        });
+        clearCategoryButton.addActionListener(e -> clearCategoryFields());
 
         panel.add(formPanel, BorderLayout.CENTER);
         return panel;
@@ -608,7 +537,7 @@ public class ProductPanel extends JPanel {
         panel.setBackground(BACKGROUND_COLOR);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Create a form panel with card-like appearance
+        // Create a form panel with a card-like appearance
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(PANEL_BACKGROUND);
         formPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -640,7 +569,7 @@ public class ProductPanel extends JPanel {
         formPanel.add(idLabel, gbc);
 
         unitTypeIdField = createStyledTextField();
-        unitTypeIdField.setToolTipText("Enter the unit type ID");
+        unitTypeIdField.setEditable(false);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(unitTypeIdField, gbc);
@@ -704,33 +633,13 @@ public class ProductPanel extends JPanel {
         formPanel.add(buttonPanel, gbc);
 
         // Add action listeners
-        addUnitTypeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addUnitType();
-            }
-        });
+        addUnitTypeButton.addActionListener(e -> addUnitType());
 
-        updateUnitTypeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateUnitType();
-            }
-        });
+        updateUnitTypeButton.addActionListener(e -> updateUnitType());
 
-        deleteUnitTypeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deleteUnitType();
-            }
-        });
+        deleteUnitTypeButton.addActionListener(e -> deleteUnitType());
 
-        clearUnitTypeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearUnitTypeFields();
-            }
-        });
+        clearUnitTypeButton.addActionListener(e -> clearUnitTypeFields());
 
         panel.add(formPanel, BorderLayout.CENTER);
         return panel;
@@ -865,13 +774,13 @@ public class ProductPanel extends JPanel {
             addProductButton.setText("Adding...");
 
             try {
-                // Get selected category ID
+                // Get the selected category ID
                 int categoryId = getCategoryIdFromComboBox();
 
                 // Get selected unit type ID
                 int unitTypeId = getUnitTypeIdFromComboBox(true);
 
-                // Create new product
+                // Create a new product
                 int id = Integer.parseInt(productIdField.getText().trim());
                 String name = productNameField.getText().trim();
 
@@ -901,7 +810,7 @@ public class ProductPanel extends JPanel {
                 return;
             }
 
-            // Disable button temporarily
+            // Disable the button temporarily
             updateProductButton.setEnabled(false);
             updateProductButton.setText("Updating...");
 
@@ -954,7 +863,7 @@ public class ProductPanel extends JPanel {
         );
 
         if (result == JOptionPane.YES_OPTION) {
-            // Disable button temporarily
+            // Disable the button temporarily
             deleteProductButton.setEnabled(false);
             deleteProductButton.setText("Deleting...");
 
@@ -997,13 +906,13 @@ public class ProductPanel extends JPanel {
             addVariantButton.setText("Adding...");
 
             try {
-                // Get selected product ID
+                // Get a selected product ID
                 int productId = getProductIdFromComboBox();
 
                 // Get selected unit type ID
                 int unitTypeId = getUnitTypeIdFromComboBox(false);
 
-                // Create new product variant
+                // Create a new product variant
                 int id = Integer.parseInt(variantIdField.getText().trim());
                 float unitQuantity = Float.parseFloat(unitQuantityField.getText().trim());
                 float price = Float.parseFloat(variantPriceField.getText().trim());
@@ -1031,7 +940,7 @@ public class ProductPanel extends JPanel {
                 return;
             }
 
-            // Disable button temporarily
+            // Disable the button temporarily
             updateVariantButton.setEnabled(false);
             updateVariantButton.setText("Updating...");
 
@@ -1083,7 +992,7 @@ public class ProductPanel extends JPanel {
         );
 
         if (result == JOptionPane.YES_OPTION) {
-            // Disable button temporarily
+            // Disable the button temporarily
             deleteVariantButton.setEnabled(false);
             deleteVariantButton.setText("Deleting...");
 
@@ -1120,7 +1029,7 @@ public class ProductPanel extends JPanel {
         productIdField.setText("");
         productNameField.setText("");
 
-        // Reset combo boxes to first item if available
+        // Reset combo boxes to the first item if available
         if (categoryComboBox.getItemCount() > 0) {
             categoryComboBox.setSelectedIndex(0);
         }
@@ -1144,7 +1053,7 @@ public class ProductPanel extends JPanel {
         unitQuantityField.setText("");
         variantPriceField.setText("");
 
-        // Reset combo boxes to first item if available
+        // Reset combo boxes to the first item if available
         if (productComboBox.getItemCount() > 0) {
             productComboBox.setSelectedIndex(0);
         }
@@ -1294,14 +1203,13 @@ public class ProductPanel extends JPanel {
             addCategoryButton.setText("Adding...");
 
             try {
-                // Create new category
-                int id = Integer.parseInt(categoryIdField.getText().trim());
+                // Create a new category
                 String name = categoryNameField.getText().trim();
 
-                Category category = new Category(id, name);
+                Category category = new Category(name);
                 categories.add(category);
 
-                // Update category combo box in product tab
+                // Update category combo box in the product tab
                 updateCategoryComboBox();
 
                 showMessage("Category added successfully!", "success", false);
@@ -1324,7 +1232,7 @@ public class ProductPanel extends JPanel {
                 return;
             }
 
-            // Disable button temporarily
+            // Disable the button temporarily
             updateCategoryButton.setEnabled(false);
             updateCategoryButton.setText("Updating...");
 
@@ -1343,7 +1251,7 @@ public class ProductPanel extends JPanel {
                 }
 
                 if (found) {
-                    // Update category combo box in product tab
+                    // Update category combo box in the product tab
                     updateCategoryComboBox();
                     showMessage("Category updated successfully!", "success", false);
                 } else {
@@ -1375,7 +1283,7 @@ public class ProductPanel extends JPanel {
         );
 
         if (result == JOptionPane.YES_OPTION) {
-            // Disable button temporarily
+            // Disable the button temporarily
             deleteCategoryButton.setEnabled(false);
             deleteCategoryButton.setText("Deleting...");
 
@@ -1393,7 +1301,7 @@ public class ProductPanel extends JPanel {
                 }
 
                 if (found) {
-                    // Update category combo box in product tab
+                    // Update category combo box in the product tab
                     updateCategoryComboBox();
                     showMessage("Category deleted successfully!", "success", false);
                     clearCategoryFields();
@@ -1425,19 +1333,8 @@ public class ProductPanel extends JPanel {
 
     private boolean validateCategoryFields() {
         // Basic validation
-        if (categoryIdField.getText().trim().isEmpty()) {
-            showMessage("Category ID cannot be empty", "error", false);
-            highlightErrorField(categoryIdField);
-            return false;
-        }
 
-        try {
-            Integer.parseInt(categoryIdField.getText().trim());
-        } catch (NumberFormatException e) {
-            showMessage("Category ID must be a number", "error", false);
-            highlightErrorField(categoryIdField);
-            return false;
-        }
+
 
         if (categoryNameField.getText().trim().isEmpty()) {
             showMessage("Category name cannot be empty", "error", false);
@@ -1458,12 +1355,11 @@ public class ProductPanel extends JPanel {
             addUnitTypeButton.setText("Adding...");
 
             try {
-                // Create new unit type
-                int id = Integer.parseInt(unitTypeIdField.getText().trim());
+                // Create a new unit type
                 String name = unitTypeNameField.getText().trim();
                 float conversionRate = Float.parseFloat(conversionRateField.getText().trim());
 
-                UnitType unitType = new UnitType(id, name, conversionRate);
+                UnitType unitType = new UnitType(name, conversionRate);
                 unitTypes.add(unitType);
 
                 // Update unit type combo boxes
@@ -1489,7 +1385,7 @@ public class ProductPanel extends JPanel {
                 return;
             }
 
-            // Disable button temporarily
+            // Disable the button temporarily
             updateUnitTypeButton.setEnabled(false);
             updateUnitTypeButton.setText("Updating...");
 
@@ -1541,7 +1437,7 @@ public class ProductPanel extends JPanel {
         );
 
         if (result == JOptionPane.YES_OPTION) {
-            // Disable button temporarily
+            // Disable the button temporarily
             deleteUnitTypeButton.setEnabled(false);
             deleteUnitTypeButton.setText("Deleting...");
 
@@ -1592,19 +1488,7 @@ public class ProductPanel extends JPanel {
 
     private boolean validateUnitTypeFields() {
         // Basic validation
-        if (unitTypeIdField.getText().trim().isEmpty()) {
-            showMessage("Unit Type ID cannot be empty", "error", false);
-            highlightErrorField(unitTypeIdField);
-            return false;
-        }
 
-        try {
-            Integer.parseInt(unitTypeIdField.getText().trim());
-        } catch (NumberFormatException e) {
-            showMessage("Unit Type ID must be a number", "error", false);
-            highlightErrorField(unitTypeIdField);
-            return false;
-        }
 
         if (unitTypeNameField.getText().trim().isEmpty()) {
             showMessage("Unit Type name cannot be empty", "error", false);
