@@ -351,7 +351,7 @@ public class DashboardPanel extends JPanel {
         contentPanel.setLayout(new GridLayout(2, 2, 15, 15));
 
         // Add summary cards
-        contentPanel.add(createSummaryCard("Total Products", "1,245", new Color(41, 128, 185)));
+        contentPanel.add(createSummaryCard("Total Products", String.valueOf(Product.getTotalProducts()), new Color(41, 128, 185)));
         contentPanel.add(createSummaryCard("Today's Sales", "$3,890", new Color(39, 174, 96)));
         contentPanel.add(createSummaryCard("Total Customers", "856", new Color(142, 68, 173)));
         contentPanel.add(createSummaryCard("Pending Orders", "12", new Color(230, 126, 34)));
