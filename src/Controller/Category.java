@@ -12,11 +12,18 @@ public class Category {
         this.setName(name);
     }
 
+    public Category(String name) {
+        this.setName(name);
+    }
+
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
+        if (id < 1) {
+            throw new IllegalArgumentException("Category ID must be greater than 0");
+        }
         this.id = id;
     }
 
