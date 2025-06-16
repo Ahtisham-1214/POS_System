@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import Controller.Product;
 
 public class DashboardPanel extends JPanel {
     private JPanel contentPanel;
