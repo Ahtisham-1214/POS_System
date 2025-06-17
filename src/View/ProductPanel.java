@@ -60,20 +60,15 @@ public class ProductPanel extends JPanel {
 
         // Update combo boxes
         new CategoryPanel().updateCategoryComboBox();
-        updateUnitTypeComboBoxes();
-    }
-
-
-    private void updateUnitTypeComboBoxes() {
+//        updateUnitTypeComboBoxes();
         unitTypeComboBox.removeAllItems();
-         ProductVariantPanel.getVariantUnitTypeComboBox().removeAllItems();
 
         for (UnitType unitType : unitTypes) {
             String item = unitType.getName();
             unitTypeComboBox.addItem(item);
-            ProductVariantPanel.getVariantUnitTypeComboBox().addItem(item);
         }
     }
+
 
     private void updateProductComboBox() {
         productComboBox.removeAllItems();
