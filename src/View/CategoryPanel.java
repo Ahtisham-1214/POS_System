@@ -23,7 +23,6 @@ public class CategoryPanel {
     private static JComboBox<String> categoryComboBox = new JComboBox<>();
 
 
-
     private static final Color PRIMARY_COLOR = new Color(70, 130, 180); // Steel Blue
     private static final Color SECONDARY_COLOR = new Color(100, 149, 237); // Cornflower Blue
     private static final Color BACKGROUND_COLOR = new Color(240, 248, 255); // Alice Blue
@@ -39,6 +38,7 @@ public class CategoryPanel {
     public static JComboBox<String> getCategoryComboBox() {
         return categoryComboBox;
     }
+
     public static void setCategoryComboBox(JComboBox<String> categoryComboBox) {
         CategoryPanel.categoryComboBox = categoryComboBox;
     }
@@ -330,6 +330,19 @@ public class CategoryPanel {
     private boolean validateCategoryFields() {
         // Basic validation
 
+        if (categoryIdField.getText().trim().isEmpty()) {
+            showMessage("Category ID cannot be empty", "error", false);
+            highlightErrorField(categoryIdField);
+            return false;
+        }
+        try {
+            Integer.parseInt(categoryIdField.getText().trim());
+        } catch (NumberFormatException e) {
+            showMessage("Category ID must be a number", "error", false);
+            highlightErrorField(categoryIdField);
+            return false;
+        }
+
         if (categoryNameField.getText().trim().isEmpty()) {
             showMessage("Category name cannot be empty", "error", false);
             highlightErrorField(categoryNameField);
@@ -348,8 +361,8 @@ public class CategoryPanel {
 
     private void showMessage(String message, String type, boolean isProductTab) {
         JLabel messageLabel;
-          // Category tab
-            messageLabel = categoryMessageLabel;
+        // Category tab
+        messageLabel = categoryMessageLabel;
 
         messageLabel.setText(message);
 
