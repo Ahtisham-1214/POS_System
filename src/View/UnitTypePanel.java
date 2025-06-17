@@ -251,10 +251,11 @@ public class UnitTypePanel {
 
             try {
                 // Create a new unit type
+                int id = Integer.parseInt(unitTypeIdField.getText().trim());
                 String name = unitTypeNameField.getText().trim();
                 float conversionRate = Float.parseFloat(conversionRateField.getText().trim());
 
-                UnitType unitType = new UnitType(name, conversionRate);
+                UnitType unitType = new UnitType(id, name, conversionRate);
                 unitTypes.add(unitType);
 
                 // Update unit type combo boxes
@@ -424,12 +425,10 @@ public class UnitTypePanel {
 
     private void updateUnitTypeComboBoxes() {
         getUnitTypeComboBox().removeAllItems();
-        getUnitTypeComboBox().removeAllItems();
 
         for (UnitType unitType : unitTypes) {
             String item = unitType.getName();
             getUnitTypeComboBox().addItem(item);
-            ProductVariantPanel.getVariantUnitTypeComboBox().addItem(item);
         }
     }
 
