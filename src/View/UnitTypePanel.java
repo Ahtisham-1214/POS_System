@@ -385,6 +385,19 @@ public class UnitTypePanel {
 
     private boolean validateUnitTypeFields() {
         // Basic validation
+        if (unitTypeIdField.getText().trim().isEmpty()) {
+            showMessage("Unit Type ID cannot be empty", "error");
+            highlightErrorField(unitTypeIdField);
+            return false;
+        }
+
+        try {
+            Integer.parseInt(unitTypeIdField.getText().trim());
+        } catch (NumberFormatException e) {
+            showMessage("Unit Type ID must be a number", "error");
+            highlightErrorField(unitTypeIdField);
+            return false;
+        }
 
         if (unitTypeNameField.getText().trim().isEmpty()) {
             showMessage("Unit Type name cannot be empty", "error");
