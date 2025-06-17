@@ -80,6 +80,7 @@ public class ProductVariantPanel {
             formPanel.add(idLabel, gbc);
 
             variantIdField = createStyledTextField();
+            variantIdField.setText(String.valueOf(productVariants.size() + 1));
             variantIdField.setEditable(false);
             gbc.gridx = 1;
             gbc.anchor = GridBagConstraints.WEST;
@@ -208,6 +209,7 @@ public class ProductVariantPanel {
 
                 showMessage("Product variant added successfully!", "success", false);
                 clearVariantFields();
+                variantIdField.setText(String.valueOf(productVariants.size() + 1));
             } catch (Exception ex) {
                 showMessage("Error adding product variant: " + ex.getMessage(), "error", false);
             } finally {
@@ -298,6 +300,8 @@ public class ProductVariantPanel {
                 if (found) {
                     showMessage("Product variant deleted successfully!", "success", false);
                     clearVariantFields();
+                    variantIdField.setText(String.valueOf(productVariants.size()));
+
                 } else {
                     showMessage("Product variant with ID " + id + " not found", "error", false);
                 }
@@ -312,7 +316,7 @@ public class ProductVariantPanel {
 
     private void clearVariantFields() {
         // Clear all input fields
-        variantIdField.setText("");
+//        variantIdField.setText("");
         unitQuantityField.setText("");
         variantPriceField.setText("");
 
@@ -331,7 +335,7 @@ public class ProductVariantPanel {
         }
 
         // Set focus to ID field
-        variantIdField.requestFocusInWindow();
+        productComboBox.requestFocusInWindow();
     }
 
 

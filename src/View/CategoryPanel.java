@@ -81,7 +81,8 @@ public class CategoryPanel {
         formPanel.add(idLabel, gbc);
 
         categoryIdField = createStyledTextField();
-//        categoryIdField.setEditable(false);
+        categoryIdField.setText(String.valueOf(categories.size() + 1));
+        categoryIdField.setEditable(false);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(categoryIdField, gbc);
@@ -207,6 +208,7 @@ public class CategoryPanel {
 
                 showMessage("Category added successfully!", "success", false);
                 clearCategoryFields();
+                categoryIdField.setText(String.valueOf(categories.size() + 1));
             } catch (Exception ex) {
                 showMessage("Error adding category: " + ex.getMessage(), "error", false);
             } finally {
@@ -298,6 +300,7 @@ public class CategoryPanel {
                     updateCategoryComboBox();
                     showMessage("Category deleted successfully!", "success", false);
                     clearCategoryFields();
+                    categoryIdField.setText(String.valueOf(categories.size()));
                 } else {
                     showMessage("Category with ID " + id + " not found", "error", false);
                 }
@@ -312,7 +315,7 @@ public class CategoryPanel {
 
     private void clearCategoryFields() {
         // Clear all input fields
-        categoryIdField.setText("");
+//        categoryIdField.setText("");
         categoryNameField.setText("");
 
         // Clear message only if it's not a success message
@@ -321,7 +324,7 @@ public class CategoryPanel {
         }
 
         // Set focus to ID field
-        categoryIdField.requestFocusInWindow();
+        categoryNameField.requestFocusInWindow();
     }
 
     private boolean validateCategoryFields() {

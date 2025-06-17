@@ -162,6 +162,7 @@ public class ProductPanel extends JPanel {
         formPanel.add(idLabel, gbc);
 
         productIdField = createStyledTextField();
+        productIdField.setText(String.valueOf(products.size() + 1));
         productIdField.setEditable(false);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
@@ -317,9 +318,8 @@ public class ProductPanel extends JPanel {
      * Displays a message with the specified type (success, error, info)
      * @param message The message to display
      * @param type The message type (success, error, info)
-     * @param isProductTab Whether the message is for the product tab
      */
-    private void showMessage(String message, String type, boolean isProductTab) {
+    private void showMessage(String message, String type) {
         JLabel messageLabel = productMessageLabel;
 
         messageLabel.setText(message);
@@ -381,7 +381,7 @@ public class ProductPanel extends JPanel {
                 int categoryId = getCategoryIdFromComboBox();
 
                 // Get selected unit type ID
-                int unitTypeId = getUnitTypeIdFromComboBox(true);
+                int unitTypeId = getUnitTypeIdFromComboBox();
 
                 // Create a new product
                 int id = Integer.parseInt(productIdField.getText().trim());
@@ -393,10 +393,11 @@ public class ProductPanel extends JPanel {
                 // Update product combo box in variant tab
                 updateProductComboBox();
 
-                showMessage("Product added successfully!", "success", true);
+                showMessage("Product added successfully!", "success");
                 clearProductFields();
+                productIdField.setText(String.valueOf(products.size() + 1));
             } catch (Exception ex) {
-                showMessage("Error adding product: " + ex.getMessage(), "error", true);
+                showMessage("Error adding product: " + ex.getMessage(), "error");
             } finally {
                 addProductButton.setText("Add");
                 addProductButton.setEnabled(true);
@@ -408,7 +409,7 @@ public class ProductPanel extends JPanel {
         if (validateProductFields()) {
             // Validate that ID is provided for update
             if (productIdField.getText().trim().isEmpty()) {
-                showMessage("Please enter a product ID to update", "error", true);
+                showMessage("Please enter a product ID to update", "error");
                 highlightErrorField(productIdField);
                 return;
             }
@@ -421,7 +422,7 @@ public class ProductPanel extends JPanel {
                 int id = Integer.parseInt(productIdField.getText().trim());
                 String name = productNameField.getText().trim();
                 int categoryId = getCategoryIdFromComboBox();
-                int unitTypeId = getUnitTypeIdFromComboBox(true);
+                int unitTypeId = getUnitTypeIdFromComboBox();
 
                 // Find and update the product
                 boolean found = false;
@@ -436,12 +437,12 @@ public class ProductPanel extends JPanel {
                 if (found) {
                     // Update product combo box in variant tab
                     updateProductComboBox();
-                    showMessage("Product updated successfully!", "success", true);
+                    showMessage("Product updated successfully!", "success");
                 } else {
-                    showMessage("Product with ID " + id + " not found", "error", true);
+                    showMessage("Product with ID " + id + " not found", "error");
                 }
             } catch (Exception ex) {
-                showMessage("Error updating product: " + ex.getMessage(), "error", true);
+                showMessage("Error updating product: " + ex.getMessage(), "error");
             } finally {
                 updateProductButton.setText("Update");
                 updateProductButton.setEnabled(true);
@@ -451,7 +452,7 @@ public class ProductPanel extends JPanel {
 
     private void deleteProduct() {
         if (productIdField.getText().trim().isEmpty()) {
-            showMessage("Please enter a product ID to delete", "error", true);
+            showMessage("Please enter a product ID to delete", "error");
             highlightErrorField(productIdField);
             return;
         }
@@ -486,13 +487,14 @@ public class ProductPanel extends JPanel {
                 if (found) {
                     // Update product combo box in variant tab
                     updateProductComboBox();
-                    showMessage("Product deleted successfully!", "success", true);
+                    showMessage("Product deleted successfully!", "success");
                     clearProductFields();
+                    productIdField.setText(String.valueOf(products.size()));
                 } else {
-                    showMessage("Product with ID " + id + " not found", "error", true);
+                    showMessage("Product with ID " + id + " not found", "error");
                 }
             } catch (Exception ex) {
-                showMessage("Error deleting product: " + ex.getMessage(), "error", true);
+                showMessage("Error deleting product: " + ex.getMessage(), "error");
             } finally {
                 deleteProductButton.setText("Delete");
                 deleteProductButton.setEnabled(true);
@@ -503,7 +505,7 @@ public class ProductPanel extends JPanel {
 
     private void clearProductFields() {
         // Clear all input fields
-        productIdField.setText("");
+//        productIdField.setText("");
         productNameField.setText("");
 
         // Reset combo boxes to the first item if available
@@ -521,39 +523,26 @@ public class ProductPanel extends JPanel {
         }
 
         // Set focus to ID field
-        productIdField.requestFocusInWindow();
+        productNameField.requestFocusInWindow();
     }
 
 
     private boolean validateProductFields() {
         // Basic validation
-        if (productIdField.getText().trim().isEmpty()) {
-            showMessage("Product ID cannot be empty", "error", true);
-            highlightErrorField(productIdField);
-            return false;
-        }
-
-        try {
-            Integer.parseInt(productIdField.getText().trim());
-        } catch (NumberFormatException e) {
-            showMessage("Product ID must be a number", "error", true);
-            highlightErrorField(productIdField);
-            return false;
-        }
 
         if (productNameField.getText().trim().isEmpty()) {
-            showMessage("Product name cannot be empty", "error", true);
+            showMessage("Product name cannot be empty", "error");
             highlightErrorField(productNameField);
             return false;
         }
 
         if (categoryComboBox.getSelectedIndex() == -1) {
-            showMessage("Please select a category", "error", true);
+            showMessage("Please select a category", "error");
             return false;
         }
 
         if (unitTypeComboBox.getSelectedIndex() == -1) {
-            showMessage("Please select a unit type", "error", true);
+            showMessage("Please select a unit type", "error");
             return false;
         }
         return true;
@@ -570,8 +559,8 @@ public class ProductPanel extends JPanel {
         return Integer.parseInt(selected.split(" - ")[0]);
     }
 
-    private int getUnitTypeIdFromComboBox(boolean isProductTab) {
-        JComboBox<String> comboBox = isProductTab ? unitTypeComboBox : new ProductVariantPanel().getVariantUnitTypeComboBox();
+    private int getUnitTypeIdFromComboBox() {
+        JComboBox<String> comboBox =   unitTypeComboBox;
         String selected = (String) comboBox.getSelectedItem();
         if (selected == null || selected.isEmpty()) {
             return -1;

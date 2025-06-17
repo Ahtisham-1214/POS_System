@@ -78,6 +78,7 @@ public class UnitTypePanel {
 
             unitTypeIdField = createStyledTextField();
             unitTypeIdField.setEditable(false);
+            unitTypeIdField.setText(String.valueOf(unitTypes.size() + 1));
             gbc.gridx = 1;
             gbc.anchor = GridBagConstraints.WEST;
             formPanel.add(unitTypeIdField, gbc);
@@ -261,6 +262,7 @@ public class UnitTypePanel {
 
                 showMessage("Unit Type added successfully!", "success");
                 clearUnitTypeFields();
+                unitTypeIdField.setText(String.valueOf(unitTypes.size() + 1));
             } catch (Exception ex) {
                 showMessage("Error adding unit type: " + ex.getMessage(), "error");
             } finally {
@@ -353,6 +355,7 @@ public class UnitTypePanel {
                     updateUnitTypeComboBoxes();
                     showMessage("Unit Type deleted successfully!", "success");
                     clearUnitTypeFields();
+                    unitTypeIdField.setText(String.valueOf(unitTypes.size()));
                 } else {
                     showMessage("Unit Type with ID " + id + " not found", "error");
                 }
@@ -367,7 +370,7 @@ public class UnitTypePanel {
 
     private void clearUnitTypeFields() {
         // Clear all input fields
-        unitTypeIdField.setText("");
+//        unitTypeIdField.setText("");
         unitTypeNameField.setText("");
         conversionRateField.setText("");
 
@@ -377,7 +380,7 @@ public class UnitTypePanel {
         }
 
         // Set focus to ID field
-        unitTypeIdField.requestFocusInWindow();
+        unitTypeNameField.requestFocusInWindow();
     }
 
     private boolean validateUnitTypeFields() {
