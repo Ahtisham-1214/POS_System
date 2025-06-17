@@ -1,25 +1,35 @@
 package Controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import Model.UnitTypeDatabase;
 
 public class UnitType {
     private int id;
     private String name;
     private float conversionToBaseUnit;
 
-    public static ArrayList<UnitType> unitTypes = new ArrayList<UnitType>();
+    public static ArrayList<UnitType> unitTypes;
 
-    public UnitType(int id, String name, float conversionToBaseUnit) {
+    static {
+        try {
+            unitTypes = new UnitTypeDatabase().getUnitTypes();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public UnitType(int id, String name, float conversionToBaseUnit) throws SQLException {
         this.setId(id);
         this.setName(name);
         this.setConversionToBaseUnit(conversionToBaseUnit);
+//        unitTypes.add(this);
+        new UnitTypeDatabase(this.getId(), this.getName(), this.getConversionToBaseUnit());
     }
 
-    public UnitType(String name, float conversionToBaseUnit) {
-        this.setName(name);
-        this.setConversionToBaseUnit(conversionToBaseUnit);
-    }
+    public UnitType(){
 
+    }
     public int getId() {
         return id;
     }
