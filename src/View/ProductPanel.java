@@ -1,8 +1,6 @@
 package View;
 
-import Controller.Category;
 import Controller.Product;
-import Controller.ProductVariant;
 import Controller.UnitType;
 
 import javax.swing.*;
@@ -11,7 +9,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import static Controller.Product.products;
-import static Controller.ProductVariant.productVariants;
 import static Controller.UnitType.unitTypes;
 
 public class ProductPanel extends JPanel {
@@ -32,30 +29,13 @@ public class ProductPanel extends JPanel {
 
     // Product Variant tab components
     private JPanel variantPanel;
-    private JTextField variantIdField;
     private JComboBox<String> productComboBox;
-    private JTextField unitQuantityField;
-    private JComboBox<String> variantUnitTypeComboBox;
-    private JTextField variantPriceField;
-    private JButton addVariantButton;
-    private JButton updateVariantButton;
-    private JButton deleteVariantButton;
-    private JButton clearVariantButton;
-    private JLabel variantMessageLabel;
 
     // Category tab components
     private JPanel categoryPanel;
 
     // Unit Type tab components
     private JPanel unitTypePanel;
-    private JTextField unitTypeIdField;
-    private JTextField unitTypeNameField;
-    private JTextField conversionRateField;
-    private JButton addUnitTypeButton;
-    private JButton updateUnitTypeButton;
-    private JButton deleteUnitTypeButton;
-    private JButton clearUnitTypeButton;
-    private JLabel unitTypeMessageLabel;
 
 
     // Define colors for better UI consistency
@@ -86,12 +66,12 @@ public class ProductPanel extends JPanel {
 
     private void updateUnitTypeComboBoxes() {
         unitTypeComboBox.removeAllItems();
-        variantUnitTypeComboBox.removeAllItems();
+         ProductVariantPanel.getVariantUnitTypeComboBox().removeAllItems();
 
         for (UnitType unitType : unitTypes) {
             String item = unitType.getName();
             unitTypeComboBox.addItem(item);
-            variantUnitTypeComboBox.addItem(item);
+            ProductVariantPanel.getVariantUnitTypeComboBox().addItem(item);
         }
     }
 
@@ -129,7 +109,7 @@ public class ProductPanel extends JPanel {
         tabbedPane.addTab("Products", productPanel);
 
         // Create variant panel
-        variantPanel = createVariantPanel();
+        variantPanel = new ProductVariantPanel().getPanel();
         tabbedPane.addTab("Product Variants", variantPanel);
 
         // Create category panel
@@ -137,7 +117,7 @@ public class ProductPanel extends JPanel {
         tabbedPane.addTab("Categories", categoryPanel);
 
         // Create a unit type panel
-        unitTypePanel = createUnitTypePanel();
+        unitTypePanel = new UnitTypePanel().getPanel();
         tabbedPane.addTab("Unit Types", unitTypePanel);
 
         // Add components to the main panel
@@ -221,7 +201,7 @@ public class ProductPanel extends JPanel {
         gbc.anchor = GridBagConstraints.EAST;
         formPanel.add(unitTypeLabel, gbc);
 
-        unitTypeComboBox = new JComboBox<>();
+        unitTypeComboBox = UnitTypePanel.getUnitTypeComboBox();
         unitTypeComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
         unitTypeComboBox.setToolTipText("Select the unit type");
         gbc.gridx = 1;
@@ -272,261 +252,6 @@ public class ProductPanel extends JPanel {
         deleteProductButton.addActionListener(e -> deleteProduct());
 
         clearProductButton.addActionListener(e -> clearProductFields());
-
-        panel.add(formPanel, BorderLayout.CENTER);
-        return panel;
-    }
-
-    private JPanel createVariantPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(BACKGROUND_COLOR);
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        // Create a form panel with a card-like appearance
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(PANEL_BACKGROUND);
-        formPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-            BorderFactory.createEmptyBorder(25, 30, 25, 30)
-        ));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Message label for feedback with improved styling
-        variantMessageLabel = new JLabel("");
-        variantMessageLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        variantMessageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        formPanel.add(variantMessageLabel, gbc);
-
-        // Create and style form fields
-        // ID field
-        JLabel idLabel = createStyledLabel("Variant ID:");
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(idLabel, gbc);
-
-        variantIdField = createStyledTextField();
-        variantIdField.setEditable(false);
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(variantIdField, gbc);
-
-        // Product field
-        JLabel productLabel = createStyledLabel("Product:");
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(productLabel, gbc);
-
-        productComboBox = new JComboBox<>();
-        productComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
-        productComboBox.setToolTipText("Select the product");
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(productComboBox, gbc);
-
-        // Unit Quantity field
-        JLabel quantityLabel = createStyledLabel("Unit Quantity:");
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(quantityLabel, gbc);
-
-        unitQuantityField = createStyledTextField();
-        unitQuantityField.setToolTipText("Enter the unit quantity (numeric value)");
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(unitQuantityField, gbc);
-
-        // Unit Type field
-        JLabel unitTypeLabel = createStyledLabel("Unit Type:");
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(unitTypeLabel, gbc);
-
-        variantUnitTypeComboBox = new JComboBox<>();
-        variantUnitTypeComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
-        variantUnitTypeComboBox.setToolTipText("Select the unit type");
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(variantUnitTypeComboBox, gbc);
-
-        // Price field
-        JLabel priceLabel = createStyledLabel("Price:");
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(priceLabel, gbc);
-
-        variantPriceField = createStyledTextField();
-        variantPriceField.setToolTipText("Enter the price (numeric value)");
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(variantPriceField, gbc);
-
-        // Buttons panel with improved styling
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        buttonPanel.setBackground(PANEL_BACKGROUND);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-
-        addVariantButton = createStyledButton("Add");
-        addVariantButton.setToolTipText("Add a new product variant");
-        addVariantButton.setBackground(PRIMARY_COLOR);
-
-        updateVariantButton = createStyledButton("Update");
-        updateVariantButton.setToolTipText("Update the selected product variant");
-        updateVariantButton.setBackground(SECONDARY_COLOR);
-
-        deleteVariantButton = createStyledButton("Delete");
-        deleteVariantButton.setToolTipText("Delete the selected product variant");
-        deleteVariantButton.setBackground(new Color(220, 53, 69)); // Bootstrap danger red
-
-        clearVariantButton = createStyledButton("Clear");
-        clearVariantButton.setToolTipText("Clear all fields");
-        clearVariantButton.setBackground(new Color(108, 117, 125)); // Bootstrap secondary gray
-
-        buttonPanel.add(addVariantButton);
-        buttonPanel.add(updateVariantButton);
-        buttonPanel.add(deleteVariantButton);
-        buttonPanel.add(clearVariantButton);
-
-        gbc.gridx = 0;
-        gbc.gridy = 6;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        formPanel.add(buttonPanel, gbc);
-
-        // Add action listeners
-        addVariantButton.addActionListener(e -> addProductVariant());
-
-        updateVariantButton.addActionListener(e -> updateProductVariant());
-
-        deleteVariantButton.addActionListener(e -> deleteProductVariant());
-
-        clearVariantButton.addActionListener(e -> clearVariantFields());
-
-        panel.add(formPanel, BorderLayout.CENTER);
-        return panel;
-    }
-
-
-    private JPanel createUnitTypePanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(BACKGROUND_COLOR);
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        // Create a form panel with a card-like appearance
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(PANEL_BACKGROUND);
-        formPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-            BorderFactory.createEmptyBorder(25, 30, 25, 30)
-        ));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Message label for feedback with improved styling
-        unitTypeMessageLabel = new JLabel("");
-        unitTypeMessageLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        unitTypeMessageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        formPanel.add(unitTypeMessageLabel, gbc);
-
-        // Create and style form fields
-        // ID field
-        JLabel idLabel = createStyledLabel("Unit Type ID:");
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(idLabel, gbc);
-
-        unitTypeIdField = createStyledTextField();
-        unitTypeIdField.setEditable(false);
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(unitTypeIdField, gbc);
-
-        // Name field
-        JLabel nameLabel = createStyledLabel("Unit Type Name:");
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(nameLabel, gbc);
-
-        unitTypeNameField = createStyledTextField();
-        unitTypeNameField.setToolTipText("Enter the unit type name");
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(unitTypeNameField, gbc);
-
-        // Conversion Rate field
-        JLabel conversionLabel = createStyledLabel("Conversion Rate:");
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(conversionLabel, gbc);
-
-        conversionRateField = createStyledTextField();
-        conversionRateField.setToolTipText("Enter the conversion rate to base unit (numeric value)");
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(conversionRateField, gbc);
-
-        // Buttons panel with improved styling
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        buttonPanel.setBackground(PANEL_BACKGROUND);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-
-        addUnitTypeButton = createStyledButton("Add");
-        addUnitTypeButton.setToolTipText("Add a new unit type");
-        addUnitTypeButton.setBackground(PRIMARY_COLOR);
-
-        updateUnitTypeButton = createStyledButton("Update");
-        updateUnitTypeButton.setToolTipText("Update the selected unit type");
-        updateUnitTypeButton.setBackground(SECONDARY_COLOR);
-
-        deleteUnitTypeButton = createStyledButton("Delete");
-        deleteUnitTypeButton.setToolTipText("Delete the selected unit type");
-        deleteUnitTypeButton.setBackground(new Color(220, 53, 69)); // Bootstrap danger red
-
-        clearUnitTypeButton = createStyledButton("Clear");
-        clearUnitTypeButton.setToolTipText("Clear all fields");
-        clearUnitTypeButton.setBackground(new Color(108, 117, 125)); // Bootstrap secondary gray
-
-        buttonPanel.add(addUnitTypeButton);
-        buttonPanel.add(updateUnitTypeButton);
-        buttonPanel.add(deleteUnitTypeButton);
-        buttonPanel.add(clearUnitTypeButton);
-
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        formPanel.add(buttonPanel, gbc);
-
-        // Add action listeners
-        addUnitTypeButton.addActionListener(e -> addUnitType());
-
-        updateUnitTypeButton.addActionListener(e -> updateUnitType());
-
-        deleteUnitTypeButton.addActionListener(e -> deleteUnitType());
-
-        clearUnitTypeButton.addActionListener(e -> clearUnitTypeFields());
 
         panel.add(formPanel, BorderLayout.CENTER);
         return panel;
@@ -595,14 +320,7 @@ public class ProductPanel extends JPanel {
      * @param isProductTab Whether the message is for the product tab
      */
     private void showMessage(String message, String type, boolean isProductTab) {
-        JLabel messageLabel;
-        if (isProductTab) {
-            messageLabel = productMessageLabel;
-        }  else if (tabbedPane.getSelectedIndex() == 3) { // Unit Type tab
-            messageLabel = unitTypeMessageLabel;
-        } else { // Variant tab
-            messageLabel = variantMessageLabel;
-        }
+        JLabel messageLabel = productMessageLabel;
 
         messageLabel.setText(message);
 
@@ -782,132 +500,6 @@ public class ProductPanel extends JPanel {
         }
     }
 
-    private void addProductVariant() {
-        if (validateVariantFields()) {
-            // Disable the button temporarily to prevent double submission
-            addVariantButton.setEnabled(false);
-
-            // Show loading state
-            addVariantButton.setText("Adding...");
-
-            try {
-                // Get a selected product ID
-                int productId = getProductIdFromComboBox();
-
-                // Get selected unit type ID
-                int unitTypeId = getUnitTypeIdFromComboBox(false);
-
-                // Create a new product variant
-                int id = Integer.parseInt(variantIdField.getText().trim());
-                float unitQuantity = Float.parseFloat(unitQuantityField.getText().trim());
-                float price = Float.parseFloat(variantPriceField.getText().trim());
-
-                ProductVariant variant = new ProductVariant(id, productId, unitQuantity, unitTypeId, price);
-                productVariants.add(variant);
-
-                showMessage("Product variant added successfully!", "success", false);
-                clearVariantFields();
-            } catch (Exception ex) {
-                showMessage("Error adding product variant: " + ex.getMessage(), "error", false);
-            } finally {
-                addVariantButton.setText("Add");
-                addVariantButton.setEnabled(true);
-            }
-        }
-    }
-
-    private void updateProductVariant() {
-        if (validateVariantFields()) {
-            // Validate that ID is provided for update
-            if (variantIdField.getText().trim().isEmpty()) {
-                showMessage("Please enter a variant ID to update", "error", false);
-                highlightErrorField(variantIdField);
-                return;
-            }
-
-            // Disable the button temporarily
-            updateVariantButton.setEnabled(false);
-            updateVariantButton.setText("Updating...");
-
-            try {
-                int id = Integer.parseInt(variantIdField.getText().trim());
-                int productId = getProductIdFromComboBox();
-                float unitQuantity = Float.parseFloat(unitQuantityField.getText().trim());
-                int unitTypeId = getUnitTypeIdFromComboBox(false);
-                float price = Float.parseFloat(variantPriceField.getText().trim());
-
-                // Find and update the product variant
-                boolean found = false;
-                for (int i = 0; i < productVariants.size(); i++) {
-                    if (productVariants.get(i).getId() == id) {
-                        productVariants.set(i, new ProductVariant(id, productId, unitQuantity, unitTypeId, price));
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    showMessage("Product variant updated successfully!", "success", false);
-                } else {
-                    showMessage("Product variant with ID " + id + " not found", "error", false);
-                }
-            } catch (Exception ex) {
-                showMessage("Error updating product variant: " + ex.getMessage(), "error", false);
-            } finally {
-                updateVariantButton.setText("Update");
-                updateVariantButton.setEnabled(true);
-            }
-        }
-    }
-
-    private void deleteProductVariant() {
-        if (variantIdField.getText().trim().isEmpty()) {
-            showMessage("Please enter a variant ID to delete", "error", false);
-            highlightErrorField(variantIdField);
-            return;
-        }
-
-        // Show confirmation dialog
-        int result = JOptionPane.showConfirmDialog(
-            this,
-            "Are you sure you want to delete this product variant?",
-            "Confirm Delete",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-        );
-
-        if (result == JOptionPane.YES_OPTION) {
-            // Disable the button temporarily
-            deleteVariantButton.setEnabled(false);
-            deleteVariantButton.setText("Deleting...");
-
-            try {
-                int id = Integer.parseInt(variantIdField.getText().trim());
-
-                // Find and remove the product variant
-                boolean found = false;
-                for (int i = 0; i < productVariants.size(); i++) {
-                    if (productVariants.get(i).getId() == id) {
-                        productVariants.remove(i);
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    showMessage("Product variant deleted successfully!", "success", false);
-                    clearVariantFields();
-                } else {
-                    showMessage("Product variant with ID " + id + " not found", "error", false);
-                }
-            } catch (Exception ex) {
-                showMessage("Error deleting product variant: " + ex.getMessage(), "error", false);
-            } finally {
-                deleteVariantButton.setText("Delete");
-                deleteVariantButton.setEnabled(true);
-            }
-        }
-    }
 
     private void clearProductFields() {
         // Clear all input fields
@@ -932,29 +524,6 @@ public class ProductPanel extends JPanel {
         productIdField.requestFocusInWindow();
     }
 
-    private void clearVariantFields() {
-        // Clear all input fields
-        variantIdField.setText("");
-        unitQuantityField.setText("");
-        variantPriceField.setText("");
-
-        // Reset combo boxes to the first item if available
-        if (productComboBox.getItemCount() > 0) {
-            productComboBox.setSelectedIndex(0);
-        }
-
-        if (variantUnitTypeComboBox.getItemCount() > 0) {
-            variantUnitTypeComboBox.setSelectedIndex(0);
-        }
-
-        // Clear message only if it's not a success message
-        if (!variantMessageLabel.getForeground().equals(SUCCESS_COLOR)) {
-            variantMessageLabel.setText("");
-        }
-
-        // Set focus to ID field
-        variantIdField.requestFocusInWindow();
-    }
 
     private boolean validateProductFields() {
         // Basic validation
@@ -990,62 +559,6 @@ public class ProductPanel extends JPanel {
         return true;
     }
 
-    private boolean validateVariantFields() {
-        // Basic validation
-        if (variantIdField.getText().trim().isEmpty()) {
-            showMessage("Variant ID cannot be empty", "error", false);
-            highlightErrorField(variantIdField);
-            return false;
-        }
-
-        try {
-            Integer.parseInt(variantIdField.getText().trim());
-        } catch (NumberFormatException e) {
-            showMessage("Variant ID must be a number", "error", false);
-            highlightErrorField(variantIdField);
-            return false;
-        }
-
-        if (productComboBox.getSelectedIndex() == -1) {
-            showMessage("Please select a product", "error", false);
-            return false;
-        }
-
-        if (unitQuantityField.getText().trim().isEmpty()) {
-            showMessage("Unit quantity cannot be empty", "error", false);
-            highlightErrorField(unitQuantityField);
-            return false;
-        }
-
-        try {
-            Float.parseFloat(unitQuantityField.getText().trim());
-        } catch (NumberFormatException e) {
-            showMessage("Unit quantity must be a number", "error", false);
-            highlightErrorField(unitQuantityField);
-            return false;
-        }
-
-        if (variantUnitTypeComboBox.getSelectedIndex() == -1) {
-            showMessage("Please select a unit type", "error", false);
-            return false;
-        }
-
-        if (variantPriceField.getText().trim().isEmpty()) {
-            showMessage("Price cannot be empty", "error", false);
-            highlightErrorField(variantPriceField);
-            return false;
-        }
-
-        try {
-            Float.parseFloat(variantPriceField.getText().trim());
-        } catch (NumberFormatException e) {
-            showMessage("Price must be a number", "error", false);
-            highlightErrorField(variantPriceField);
-            return false;
-        }
-
-        return true;
-    }
 
     private int getCategoryIdFromComboBox() {
         String selected = (String) categoryComboBox.getSelectedItem();
@@ -1058,7 +571,7 @@ public class ProductPanel extends JPanel {
     }
 
     private int getUnitTypeIdFromComboBox(boolean isProductTab) {
-        JComboBox<String> comboBox = isProductTab ? unitTypeComboBox : variantUnitTypeComboBox;
+        JComboBox<String> comboBox = isProductTab ? unitTypeComboBox : new ProductVariantPanel().getVariantUnitTypeComboBox();
         String selected = (String) comboBox.getSelectedItem();
         if (selected == null || selected.isEmpty()) {
             return -1;
@@ -1078,172 +591,4 @@ public class ProductPanel extends JPanel {
         return Integer.parseInt(selected.split(" - ")[0]);
     }
 
-
-    // Unit Type CRUD operations
-    private void addUnitType() {
-        if (validateUnitTypeFields()) {
-            // Disable the button temporarily to prevent double submission
-            addUnitTypeButton.setEnabled(false);
-
-            // Show loading state
-            addUnitTypeButton.setText("Adding...");
-
-            try {
-                // Create a new unit type
-                String name = unitTypeNameField.getText().trim();
-                float conversionRate = Float.parseFloat(conversionRateField.getText().trim());
-
-                UnitType unitType = new UnitType(name, conversionRate);
-                unitTypes.add(unitType);
-
-                // Update unit type combo boxes
-                updateUnitTypeComboBoxes();
-
-                showMessage("Unit Type added successfully!", "success", false);
-                clearUnitTypeFields();
-            } catch (Exception ex) {
-                showMessage("Error adding unit type: " + ex.getMessage(), "error", false);
-            } finally {
-                addUnitTypeButton.setText("Add");
-                addUnitTypeButton.setEnabled(true);
-            }
-        }
-    }
-
-    private void updateUnitType() {
-        if (validateUnitTypeFields()) {
-            // Validate that ID is provided for update
-            if (unitTypeIdField.getText().trim().isEmpty()) {
-                showMessage("Please enter a unit type ID to update", "error", false);
-                highlightErrorField(unitTypeIdField);
-                return;
-            }
-
-            // Disable the button temporarily
-            updateUnitTypeButton.setEnabled(false);
-            updateUnitTypeButton.setText("Updating...");
-
-            try {
-                int id = Integer.parseInt(unitTypeIdField.getText().trim());
-                String name = unitTypeNameField.getText().trim();
-                float conversionRate = Float.parseFloat(conversionRateField.getText().trim());
-
-                // Find and update the unit type
-                boolean found = false;
-                for (int i = 0; i < unitTypes.size(); i++) {
-                    if (unitTypes.get(i).getId() == id) {
-                        unitTypes.set(i, new UnitType(id, name, conversionRate));
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    // Update unit type combo boxes
-                    updateUnitTypeComboBoxes();
-                    showMessage("Unit Type updated successfully!", "success", false);
-                } else {
-                    showMessage("Unit Type with ID " + id + " not found", "error", false);
-                }
-            } catch (Exception ex) {
-                showMessage("Error updating unit type: " + ex.getMessage(), "error", false);
-            } finally {
-                updateUnitTypeButton.setText("Update");
-                updateUnitTypeButton.setEnabled(true);
-            }
-        }
-    }
-
-    private void deleteUnitType() {
-        if (unitTypeIdField.getText().trim().isEmpty()) {
-            showMessage("Please enter a unit type ID to delete", "error", false);
-            highlightErrorField(unitTypeIdField);
-            return;
-        }
-
-        // Show confirmation dialog
-        int result = JOptionPane.showConfirmDialog(
-            this,
-            "Are you sure you want to delete this unit type?",
-            "Confirm Delete",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-        );
-
-        if (result == JOptionPane.YES_OPTION) {
-            // Disable the button temporarily
-            deleteUnitTypeButton.setEnabled(false);
-            deleteUnitTypeButton.setText("Deleting...");
-
-            try {
-                int id = Integer.parseInt(unitTypeIdField.getText().trim());
-
-                // Find and remove the unit type
-                boolean found = false;
-                for (int i = 0; i < unitTypes.size(); i++) {
-                    if (unitTypes.get(i).getId() == id) {
-                        unitTypes.remove(i);
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    // Update unit type combo boxes
-                    updateUnitTypeComboBoxes();
-                    showMessage("Unit Type deleted successfully!", "success", false);
-                    clearUnitTypeFields();
-                } else {
-                    showMessage("Unit Type with ID " + id + " not found", "error", false);
-                }
-            } catch (Exception ex) {
-                showMessage("Error deleting unit type: " + ex.getMessage(), "error", false);
-            } finally {
-                deleteUnitTypeButton.setText("Delete");
-                deleteUnitTypeButton.setEnabled(true);
-            }
-        }
-    }
-
-    private void clearUnitTypeFields() {
-        // Clear all input fields
-        unitTypeIdField.setText("");
-        unitTypeNameField.setText("");
-        conversionRateField.setText("");
-
-        // Clear message only if it's not a success message
-        if (!unitTypeMessageLabel.getForeground().equals(SUCCESS_COLOR)) {
-            unitTypeMessageLabel.setText("");
-        }
-
-        // Set focus to ID field
-        unitTypeIdField.requestFocusInWindow();
-    }
-
-    private boolean validateUnitTypeFields() {
-        // Basic validation
-
-
-        if (unitTypeNameField.getText().trim().isEmpty()) {
-            showMessage("Unit Type name cannot be empty", "error", false);
-            highlightErrorField(unitTypeNameField);
-            return false;
-        }
-
-        if (conversionRateField.getText().trim().isEmpty()) {
-            showMessage("Conversion Rate cannot be empty", "error", false);
-            highlightErrorField(conversionRateField);
-            return false;
-        }
-
-        try {
-            Float.parseFloat(conversionRateField.getText().trim());
-        } catch (NumberFormatException e) {
-            showMessage("Conversion Rate must be a number", "error", false);
-            highlightErrorField(conversionRateField);
-            return false;
-        }
-
-        return true;
-    }
 }
