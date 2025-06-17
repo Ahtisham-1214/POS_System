@@ -529,6 +529,19 @@ public class ProductPanel extends JPanel {
 
     private boolean validateProductFields() {
         // Basic validation
+        if (productIdField.getText().trim().isEmpty()) {
+            showMessage("Product ID cannot be empty", "error");
+            highlightErrorField(productIdField);
+            return false;
+        }
+
+        try {
+            Integer.parseInt(productIdField.getText().trim());
+        } catch (NumberFormatException e) {
+            showMessage("Product ID must be a number", "error");
+            highlightErrorField(productIdField);
+            return false;
+        }
 
         if (productNameField.getText().trim().isEmpty()) {
             showMessage("Product name cannot be empty", "error");
