@@ -20,16 +20,16 @@ public class UnitTypePanel {
     private static final Color ERROR_COLOR = new Color(178, 34, 34); // Firebrick
     private static final Color PANEL_BACKGROUND = Color.WHITE;
 
-    private JPanel panel;
-    private JTextField unitTypeIdField;
-    private JTextField unitTypeNameField;
-    private JTextField conversionRateField;
-    private JButton addUnitTypeButton;
-    private JButton updateUnitTypeButton;
-    private JButton deleteUnitTypeButton;
-    private JButton clearUnitTypeButton;
-    private JLabel unitTypeMessageLabel;
-    private  static JComboBox<String> unitTypeComboBox = new JComboBox<>();
+    private final JPanel panel;
+    private final JTextField unitTypeIdField;
+    private final JTextField unitTypeNameField;
+    private final JTextField conversionRateField;
+    private final JTextField searchField;
+    private final JButton addUnitTypeButton;
+    private final JButton updateUnitTypeButton;
+    private final JButton deleteUnitTypeButton;
+    private final JLabel unitTypeMessageLabel;
+    private static final JComboBox<String> unitTypeComboBox = new JComboBox<>();
 
     public JPanel getPanel() {
         return panel;
@@ -41,116 +41,145 @@ public class UnitTypePanel {
 
     public UnitTypePanel() {
 
-            panel = new JPanel(new BorderLayout());
-            panel.setBackground(BACKGROUND_COLOR);
-            panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panel = new JPanel(new BorderLayout());
+        panel.setBackground(BACKGROUND_COLOR);
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-            // Create a form panel with a card-like appearance
-            JPanel formPanel = new JPanel(new GridBagLayout());
-            formPanel.setBackground(PANEL_BACKGROUND);
-            formPanel.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-                    BorderFactory.createEmptyBorder(25, 30, 25, 30)
-            ));
+        // Create a form panel with a card-like appearance
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBackground(PANEL_BACKGROUND);
+        formPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
+                BorderFactory.createEmptyBorder(25, 30, 25, 30)
+        ));
 
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(8, 8, 8, 8);
-            gbc.fill = GridBagConstraints.HORIZONTAL;
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-            // Message label for feedback with improved styling
-            unitTypeMessageLabel = new JLabel("");
-            unitTypeMessageLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-            unitTypeMessageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.gridwidth = 2;
-            gbc.anchor = GridBagConstraints.CENTER;
-            formPanel.add(unitTypeMessageLabel, gbc);
+        // Message label for feedback with improved styling
+        unitTypeMessageLabel = new JLabel("");
+        unitTypeMessageLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        unitTypeMessageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        formPanel.add(unitTypeMessageLabel, gbc);
 
-            // Create and style form fields
-            // ID field
-            JLabel idLabel = createStyledLabel("Unit Type ID:");
-            gbc.gridx = 0;
-            gbc.gridy = 1;
-            gbc.gridwidth = 1;
-            gbc.anchor = GridBagConstraints.EAST;
-            formPanel.add(idLabel, gbc);
+        // Search field
+        JLabel searchLabel = createStyledLabel("Search Unit Type:");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        formPanel.add(searchLabel, gbc);
 
-            unitTypeIdField = createStyledTextField();
-            unitTypeIdField.setEditable(false);
-            unitTypeIdField.setText(String.valueOf(unitTypes.size() + 1));
-            gbc.gridx = 1;
-            gbc.anchor = GridBagConstraints.WEST;
-            formPanel.add(unitTypeIdField, gbc);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        searchPanel.setBackground(PANEL_BACKGROUND);
 
-            // Name field
-            JLabel nameLabel = createStyledLabel("Unit Type Name:");
-            gbc.gridx = 0;
-            gbc.gridy = 2;
-            gbc.anchor = GridBagConstraints.EAST;
-            formPanel.add(nameLabel, gbc);
+        searchField = createStyledTextField();
+        searchField.setToolTipText("Enter unit type name to search");
+        searchField.setPreferredSize(new Dimension(150, 30));
+        // Add action listener to search field for the Enter key
+        searchField.addActionListener(e -> searchUnitType());
+        searchPanel.add(searchField);
 
-            unitTypeNameField = createStyledTextField();
-            unitTypeNameField.setToolTipText("Enter the unit type name");
-            gbc.gridx = 1;
-            gbc.anchor = GridBagConstraints.WEST;
-            formPanel.add(unitTypeNameField, gbc);
+        JButton searchButton = createStyledButton("Search");
+        searchButton.setPreferredSize(new Dimension(100, 30));
+        searchButton.setBackground(PRIMARY_COLOR);
+        searchPanel.add(searchButton);
 
-            // Conversion Rate field
-            JLabel conversionLabel = createStyledLabel("Conversion Rate:");
-            gbc.gridx = 0;
-            gbc.gridy = 3;
-            gbc.anchor = GridBagConstraints.EAST;
-            formPanel.add(conversionLabel, gbc);
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        formPanel.add(searchPanel, gbc);
 
-            conversionRateField = createStyledTextField();
-            conversionRateField.setToolTipText("Enter the conversion rate to base unit (numeric value)");
-            gbc.gridx = 1;
-            gbc.anchor = GridBagConstraints.WEST;
-            formPanel.add(conversionRateField, gbc);
+        // Create and style form fields
+        // ID field
+        JLabel idLabel = createStyledLabel("Unit Type ID:");
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        formPanel.add(idLabel, gbc);
 
-            // Buttons panel with improved styling
-            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-            buttonPanel.setBackground(PANEL_BACKGROUND);
-            buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        unitTypeIdField = createStyledTextField();
+        unitTypeIdField.setEditable(false);
+        unitTypeIdField.setText(String.valueOf(unitTypes.getLast().getId() + 1));
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        formPanel.add(unitTypeIdField, gbc);
 
-            addUnitTypeButton = createStyledButton("Add");
-            addUnitTypeButton.setToolTipText("Add a new unit type");
-            addUnitTypeButton.setBackground(PRIMARY_COLOR);
+        // Name field
+        JLabel nameLabel = createStyledLabel("Unit Type Name:");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.EAST;
+        formPanel.add(nameLabel, gbc);
 
-            updateUnitTypeButton = createStyledButton("Update");
-            updateUnitTypeButton.setToolTipText("Update the selected unit type");
-            updateUnitTypeButton.setBackground(SECONDARY_COLOR);
+        unitTypeNameField = createStyledTextField();
+        unitTypeNameField.setToolTipText("Enter the unit type name");
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        formPanel.add(unitTypeNameField, gbc);
 
-            deleteUnitTypeButton = createStyledButton("Delete");
-            deleteUnitTypeButton.setToolTipText("Delete the selected unit type");
-            deleteUnitTypeButton.setBackground(new Color(220, 53, 69)); // Bootstrap danger red
+        // Conversion Rate field
+        JLabel conversionLabel = createStyledLabel("Conversion Rate:");
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.anchor = GridBagConstraints.EAST;
+        formPanel.add(conversionLabel, gbc);
 
-            clearUnitTypeButton = createStyledButton("Clear");
-            clearUnitTypeButton.setToolTipText("Clear all fields");
-            clearUnitTypeButton.setBackground(new Color(108, 117, 125)); // Bootstrap secondary gray
+        conversionRateField = createStyledTextField();
+        conversionRateField.setToolTipText("Enter the conversion rate to base unit (numeric value)");
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        formPanel.add(conversionRateField, gbc);
 
-            buttonPanel.add(addUnitTypeButton);
-            buttonPanel.add(updateUnitTypeButton);
-            buttonPanel.add(deleteUnitTypeButton);
-            buttonPanel.add(clearUnitTypeButton);
+        // Buttons panel with improved styling
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        buttonPanel.setBackground(PANEL_BACKGROUND);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-            gbc.gridx = 0;
-            gbc.gridy = 4;
-            gbc.gridwidth = 2;
-            gbc.anchor = GridBagConstraints.CENTER;
-            formPanel.add(buttonPanel, gbc);
+        addUnitTypeButton = createStyledButton("Add");
+        addUnitTypeButton.setToolTipText("Add a new unit type");
+        addUnitTypeButton.setBackground(PRIMARY_COLOR);
 
-            // Add action listeners
-            addUnitTypeButton.addActionListener(e -> addUnitType());
+        updateUnitTypeButton = createStyledButton("Update");
+        updateUnitTypeButton.setToolTipText("Update the selected unit type");
+        updateUnitTypeButton.setBackground(SECONDARY_COLOR);
 
-            updateUnitTypeButton.addActionListener(e -> updateUnitType());
+        deleteUnitTypeButton = createStyledButton("Delete");
+        deleteUnitTypeButton.setToolTipText("Delete the selected unit type");
+        deleteUnitTypeButton.setBackground(new Color(220, 53, 69)); // Bootstrap danger red
 
-            deleteUnitTypeButton.addActionListener(e -> deleteUnitType());
+        JButton clearUnitTypeButton = createStyledButton("Clear");
+        clearUnitTypeButton.setToolTipText("Clear all fields");
+        clearUnitTypeButton.setBackground(new Color(108, 117, 125)); // Bootstrap secondary gray
 
-            clearUnitTypeButton.addActionListener(e -> clearUnitTypeFields());
+        buttonPanel.add(addUnitTypeButton);
+        buttonPanel.add(updateUnitTypeButton);
+        buttonPanel.add(deleteUnitTypeButton);
+        buttonPanel.add(clearUnitTypeButton);
 
-            panel.add(formPanel, BorderLayout.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        formPanel.add(buttonPanel, gbc);
+
+        // Add action listeners
+        addUnitTypeButton.addActionListener(e -> addUnitType());
+
+        updateUnitTypeButton.addActionListener(e -> updateUnitType());
+
+        deleteUnitTypeButton.addActionListener(e -> deleteUnitType());
+
+        clearUnitTypeButton.addActionListener(e -> clearUnitTypeFields());
+
+        searchButton.addActionListener(e -> searchUnitType());
+
+        panel.add(formPanel, BorderLayout.CENTER);
 
     }
 
@@ -204,12 +233,10 @@ public class UnitTypePanel {
         ));
 
         // Reset border after 2 seconds
-        Timer timer = new Timer(2000, e -> {
-            field.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(200, 200, 200)),
-                    BorderFactory.createEmptyBorder(5, 5, 5, 5)
-            ));
-        });
+        Timer timer = new Timer(2000, e -> field.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        )));
         timer.setRepeats(false);
         timer.start();
 
@@ -263,7 +290,7 @@ public class UnitTypePanel {
 
                 showMessage("Unit Type added successfully!", "success");
                 clearUnitTypeFields();
-                unitTypeIdField.setText(String.valueOf(unitTypes.size() + 1));
+                unitTypeIdField.setText(String.valueOf(unitTypes.getLast().getId() + 1));
             } catch (Exception ex) {
                 showMessage("Error adding unit type: " + ex.getMessage(), "error");
             } finally {
@@ -309,8 +336,9 @@ public class UnitTypePanel {
                 if (found) {
                     // Update unit type combo boxes
                     updateUnitTypeComboBoxes();
-                    unitTypeIdField.setText(String.valueOf(unitTypes.size() + 1));
-                    unitTypeIdField.requestFocusInWindow();
+                    clearUnitTypeFields();
+                    unitTypeIdField.setText(String.valueOf(unitTypes.getLast().getId() + 1));
+                    unitTypeNameField.requestFocusInWindow();
                     showMessage("Unit Type updated successfully!", "success");
                 } else {
                     showMessage("Unit Type with ID " + id + " not found", "error");
@@ -352,6 +380,7 @@ public class UnitTypePanel {
                 boolean found = false;
                 for (int i = 0; i < unitTypes.size(); i++) {
                     if (unitTypes.get(i).getId() == id) {
+                        unitTypes.get(i).deleteUnitType();
                         unitTypes.remove(i);
                         found = true;
                         break;
@@ -363,7 +392,8 @@ public class UnitTypePanel {
                     updateUnitTypeComboBoxes();
                     showMessage("Unit Type deleted successfully!", "success");
                     clearUnitTypeFields();
-                    unitTypeIdField.setText(String.valueOf(unitTypes.size()));
+                    unitTypeIdField.setText(String.valueOf(unitTypes.getLast().getId() + 1));
+                    unitTypeNameField.requestFocusInWindow();
                 } else {
                     showMessage("Unit Type with ID " + id + " not found", "error");
                 }
@@ -378,9 +408,10 @@ public class UnitTypePanel {
 
     private void clearUnitTypeFields() {
         // Clear all input fields
-//        unitTypeIdField.setText("");
+        unitTypeIdField.setText(String.valueOf(unitTypes.getLast().getId() + 1));
         unitTypeNameField.setText("");
         conversionRateField.setText("");
+        searchField.setText("");
 
         // Clear message only if it's not a success message
         if (!unitTypeMessageLabel.getForeground().equals(SUCCESS_COLOR)) {
@@ -436,6 +467,36 @@ public class UnitTypePanel {
         for (UnitType unitType : unitTypes) {
             String item = unitType.getName();
             getUnitTypeComboBox().addItem(item);
+        }
+    }
+
+    private void searchUnitType() {
+        String searchTerm = searchField.getText().trim().toLowerCase();
+
+        if (searchTerm.isEmpty()) {
+            showMessage("Please enter a search term", "error");
+            highlightErrorField(searchField);
+            return;
+        }
+
+        boolean found = false;
+
+        for (UnitType unitType : unitTypes) {
+            if (unitType.getName().toLowerCase().contains(searchTerm)) {
+                // Populate form fields with the matching unit type's data
+                unitTypeIdField.setText(String.valueOf(unitType.getId()));
+                unitTypeNameField.setText(unitType.getName());
+                conversionRateField.setText(String.valueOf(unitType.getConversionToBaseUnit()));
+
+                showMessage("Unit Type found: " + unitType.getName(), "success");
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            showMessage("No Unit Type found matching: " + searchTerm, "error");
+            // Don't clear the fields, so the user can modify their search
         }
     }
 
