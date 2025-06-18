@@ -1,21 +1,36 @@
 package Controller;
 
+import Model.CategoryDatabase;
+
 import java.util.ArrayList;
 
 public class Category {
-    public static ArrayList<Category> categories = new ArrayList<Category>();
+    public static ArrayList<Category> categories;
+
+    static {
+        try {
+            categories = new CategoryDatabase().getCategories();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private int id;
     private String name;
 
-    public Category(int id, String name) {
+    public Category(int id, String name) throws Exception {
         this.setId(id);
         this.setName(name);
+        new CategoryDatabase(this.getId(), this.getName());
     }
 
-    public Category(String name) {
-        this.setName(name);
+    public Category() {
+
     }
 
+    public Category(int id) throws Exception {
+        new CategoryDatabase(id);
+    }
     public int getId() {
         return id;
     }
@@ -36,5 +51,17 @@ public class Category {
             throw new IllegalArgumentException("Product Name cannot be null or empty");
         }
         this.name = name;
+    }
+
+    public void insertCategory() throws Exception {
+        new CategoryDatabase(this.getId(), this.getName());
+    }
+
+    public void updateCategory() throws Exception{
+        new CategoryDatabase().updateCategory(this.getId(), this.getName());
+    }
+
+    public void deleteCategory() throws Exception{
+        new CategoryDatabase(this.getId());
     }
 }
