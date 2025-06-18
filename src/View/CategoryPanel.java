@@ -15,6 +15,7 @@ public class CategoryPanel {
     private JPanel panel;
     private JTextField categoryIdField;
     private JTextField categoryNameField;
+    private JTextField searchField;
     private JButton addCategoryButton;
     private JButton updateCategoryButton;
     private JButton deleteCategoryButton;
@@ -71,11 +72,39 @@ public class CategoryPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         formPanel.add(categoryMessageLabel, gbc);
 
+        // Search field
+        JLabel searchLabel = createStyledLabel("Search Category:");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        formPanel.add(searchLabel, gbc);
+
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        searchPanel.setBackground(PANEL_BACKGROUND);
+
+        searchField = createStyledTextField();
+        searchField.setToolTipText("Enter category name to search");
+        searchField.setPreferredSize(new Dimension(150, 30));
+        // Add action listener to search field for the Enter key
+        searchField.addActionListener(e -> searchCategory());
+        searchPanel.add(searchField);
+
+        JButton searchButton = createStyledButton("Search");
+        searchButton.setPreferredSize(new Dimension(100, 30));
+        searchButton.setBackground(PRIMARY_COLOR);
+        searchButton.addActionListener(e -> searchCategory());
+        searchPanel.add(searchButton);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        formPanel.add(searchPanel, gbc);
+
         // Create and style form fields
         // ID field
         JLabel idLabel = createStyledLabel("Category ID:");
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.EAST;
         formPanel.add(idLabel, gbc);
@@ -90,7 +119,7 @@ public class CategoryPanel {
         // Name field
         JLabel nameLabel = createStyledLabel("Category Name:");
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.EAST;
         formPanel.add(nameLabel, gbc);
 
@@ -127,7 +156,7 @@ public class CategoryPanel {
         buttonPanel.add(clearCategoryButton);
 
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         formPanel.add(buttonPanel, gbc);
@@ -317,6 +346,7 @@ public class CategoryPanel {
         // Clear all input fields
 //        categoryIdField.setText("");
         categoryNameField.setText("");
+        searchField.setText("");
 
         // Clear message only if it's not a success message
         if (!categoryMessageLabel.getForeground().equals(SUCCESS_COLOR)) {
@@ -325,6 +355,35 @@ public class CategoryPanel {
 
         // Set focus to ID field
         categoryNameField.requestFocusInWindow();
+    }
+
+    private void searchCategory() {
+        String searchTerm = searchField.getText().trim().toLowerCase();
+
+        if (searchTerm.isEmpty()) {
+            showMessage("Please enter a search term", "error", false);
+            highlightErrorField(searchField);
+            return;
+        }
+
+        boolean found = false;
+
+        for (Category category : categories) {
+            if (category.getName().toLowerCase().contains(searchTerm)) {
+                // Populate form fields with the matching category's data
+                categoryIdField.setText(String.valueOf(category.getId()));
+                categoryNameField.setText(category.getName());
+
+                showMessage("Category found: " + category.getName(), "success", false);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            showMessage("No category found matching: " + searchTerm, "error", false);
+            // Don't clear the fields, so the user can modify their search
+        }
     }
 
     private boolean validateCategoryFields() {
