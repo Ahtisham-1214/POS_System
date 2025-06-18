@@ -2,6 +2,8 @@ package Controller;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import Model.DatabaseConnection;
 import Model.UnitTypeDatabase;
 
 public class UnitType {
@@ -55,5 +57,13 @@ public class UnitType {
 
     public void setConversionToBaseUnit(float conversionToBaseUnit) {
         this.conversionToBaseUnit = conversionToBaseUnit;
+    }
+
+    public void updateUnitType() throws SQLException {
+        new UnitTypeDatabase().updateUnitType(this.getId(), this.getName(), this.getConversionToBaseUnit());
+    }
+
+    public void deleteUnitType() throws SQLException {
+        new UnitTypeDatabase().deleteUnitType(this.getId());
     }
 }
