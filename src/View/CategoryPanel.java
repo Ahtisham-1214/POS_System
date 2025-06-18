@@ -12,15 +12,14 @@ import static Controller.Category.categories;
 // Define colors for better UI consistency
 
 public class CategoryPanel {
-    private JPanel panel;
-    private JTextField categoryIdField;
-    private JTextField categoryNameField;
-    private JTextField searchField;
-    private JButton addCategoryButton;
-    private JButton updateCategoryButton;
-    private JButton deleteCategoryButton;
-    private JButton clearCategoryButton;
-    private JLabel categoryMessageLabel;
+    private final JPanel panel;
+    private final JTextField categoryIdField;
+    private final JTextField categoryNameField;
+    private final JTextField searchField;
+    private final JButton addCategoryButton;
+    private final JButton updateCategoryButton;
+    private final JButton deleteCategoryButton;
+    private final JLabel categoryMessageLabel;
     private static JComboBox<String> categoryComboBox = new JComboBox<>();
 
 
@@ -38,10 +37,6 @@ public class CategoryPanel {
 
     public static JComboBox<String> getCategoryComboBox() {
         return categoryComboBox;
-    }
-
-    public static void setCategoryComboBox(JComboBox<String> categoryComboBox) {
-        CategoryPanel.categoryComboBox = categoryComboBox;
     }
 
     public CategoryPanel() {
@@ -110,7 +105,10 @@ public class CategoryPanel {
         formPanel.add(idLabel, gbc);
 
         categoryIdField = createStyledTextField();
-        categoryIdField.setText(String.valueOf(categories.size() + 1));
+        if (!categories.isEmpty())
+            categoryIdField.setText(String.valueOf(categories.getLast().getId() + 1));
+        else
+            categoryIdField.setText("1");
         categoryIdField.setEditable(false);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
@@ -146,7 +144,7 @@ public class CategoryPanel {
         deleteCategoryButton.setToolTipText("Delete the selected category");
         deleteCategoryButton.setBackground(new Color(220, 53, 69)); // Bootstrap danger red
 
-        clearCategoryButton = createStyledButton("Clear");
+        JButton clearCategoryButton = createStyledButton("Clear");
         clearCategoryButton.setToolTipText("Clear all fields");
         clearCategoryButton.setBackground(new Color(108, 117, 125)); // Bootstrap secondary gray
 
@@ -227,19 +225,20 @@ public class CategoryPanel {
 
             try {
                 // Create a new category
+                int id = Integer.parseInt(categoryIdField.getText().trim());
                 String name = categoryNameField.getText().trim();
 
-                Category category = new Category(name);
+                Category category = new Category(id, name);
                 categories.add(category);
 
                 // Update category combo box in the product tab
                 updateCategoryComboBox();
 
-                showMessage("Category added successfully!", "success", false);
+                showMessage("Category added successfully!", "success");
                 clearCategoryFields();
-                categoryIdField.setText(String.valueOf(categories.size() + 1));
+                categoryIdField.setText(String.valueOf(categories.getLast().getId() + 1));
             } catch (Exception ex) {
-                showMessage("Error adding category: " + ex.getMessage(), "error", false);
+                showMessage("Error adding category: " + ex.getMessage(), "error");
             } finally {
                 addCategoryButton.setText("Add");
                 addCategoryButton.setEnabled(true);
@@ -251,7 +250,7 @@ public class CategoryPanel {
         if (validateCategoryFields()) {
             // Validate that ID is provided for update
             if (categoryIdField.getText().trim().isEmpty()) {
-                showMessage("Please enter a category ID to update", "error", false);
+                showMessage("Please enter a category ID to update", "error");
                 highlightErrorField(categoryIdField);
                 return;
             }
@@ -268,7 +267,11 @@ public class CategoryPanel {
                 boolean found = false;
                 for (int i = 0; i < categories.size(); i++) {
                     if (categories.get(i).getId() == id) {
-                        categories.set(i, new Category(id, name));
+                        Category category = new Category();
+                        category.setId(id);
+                        category.setName(name);
+                        categories.set(i, category);
+                        category.updateCategory();
                         found = true;
                         break;
                     }
@@ -277,12 +280,14 @@ public class CategoryPanel {
                 if (found) {
                     // Update category combo box in the product tab
                     updateCategoryComboBox();
-                    showMessage("Category updated successfully!", "success", false);
+                    clearCategoryFields();
+                    categoryIdField.setText(String.valueOf(categories.getLast().getId() + 1));
+                    showMessage("Category updated successfully!", "success");
                 } else {
-                    showMessage("Category with ID " + id + " not found", "error", false);
+                    showMessage("Category with ID " + id + " not found", "error");
                 }
             } catch (Exception ex) {
-                showMessage("Error updating category: " + ex.getMessage(), "error", false);
+                showMessage("Error updating category: " + ex.getMessage(), "error");
             } finally {
                 updateCategoryButton.setText("Update");
                 updateCategoryButton.setEnabled(true);
@@ -292,7 +297,7 @@ public class CategoryPanel {
 
     private void deleteCategory() {
         if (categoryIdField.getText().trim().isEmpty()) {
-            showMessage("Please enter a category ID to delete", "error", false);
+            showMessage("Please enter a category ID to delete", "error");
             highlightErrorField(categoryIdField);
             return;
         }
@@ -319,6 +324,7 @@ public class CategoryPanel {
                 for (int i = 0; i < categories.size(); i++) {
                     if (categories.get(i).getId() == id) {
                         categories.remove(i);
+                        new Category(id);
                         found = true;
                         break;
                     }
@@ -327,14 +333,14 @@ public class CategoryPanel {
                 if (found) {
                     // Update category combo box in the product tab
                     updateCategoryComboBox();
-                    showMessage("Category deleted successfully!", "success", false);
+                    showMessage("Category deleted successfully!", "success");
                     clearCategoryFields();
-                    categoryIdField.setText(String.valueOf(categories.size()));
+                    categoryIdField.setText(String.valueOf(categories.getLast().getId() + 1));
                 } else {
-                    showMessage("Category with ID " + id + " not found", "error", false);
+                    showMessage("Category with ID " + id + " not found", "error");
                 }
             } catch (Exception ex) {
-                showMessage("Error deleting category: " + ex.getMessage(), "error", false);
+                showMessage("Error deleting category: " + ex.getMessage(), "error");
             } finally {
                 deleteCategoryButton.setText("Delete");
                 deleteCategoryButton.setEnabled(true);
@@ -361,7 +367,7 @@ public class CategoryPanel {
         String searchTerm = searchField.getText().trim().toLowerCase();
 
         if (searchTerm.isEmpty()) {
-            showMessage("Please enter a search term", "error", false);
+            showMessage("Please enter a search term", "error");
             highlightErrorField(searchField);
             return;
         }
@@ -374,14 +380,14 @@ public class CategoryPanel {
                 categoryIdField.setText(String.valueOf(category.getId()));
                 categoryNameField.setText(category.getName());
 
-                showMessage("Category found: " + category.getName(), "success", false);
+                showMessage("Category found: " + category.getName(), "success");
                 found = true;
                 break;
             }
         }
 
         if (!found) {
-            showMessage("No category found matching: " + searchTerm, "error", false);
+            showMessage("No category found matching: " + searchTerm, "error");
             // Don't clear the fields, so the user can modify their search
         }
     }
@@ -390,20 +396,20 @@ public class CategoryPanel {
         // Basic validation
 
         if (categoryIdField.getText().trim().isEmpty()) {
-            showMessage("Category ID cannot be empty", "error", false);
+            showMessage("Category ID cannot be empty", "error");
             highlightErrorField(categoryIdField);
             return false;
         }
         try {
             Integer.parseInt(categoryIdField.getText().trim());
         } catch (NumberFormatException e) {
-            showMessage("Category ID must be a number", "error", false);
+            showMessage("Category ID must be a number", "error");
             highlightErrorField(categoryIdField);
             return false;
         }
 
         if (categoryNameField.getText().trim().isEmpty()) {
-            showMessage("Category name cannot be empty", "error", false);
+            showMessage("Category name cannot be empty", "error");
             highlightErrorField(categoryNameField);
             return false;
         }
@@ -418,7 +424,7 @@ public class CategoryPanel {
         }
     }
 
-    private void showMessage(String message, String type, boolean isProductTab) {
+    private void showMessage(String message, String type) {
         JLabel messageLabel;
         // Category tab
         messageLabel = categoryMessageLabel;
@@ -452,12 +458,10 @@ public class CategoryPanel {
         ));
 
         // Reset border after 2 seconds
-        Timer timer = new Timer(2000, e -> {
-            field.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(200, 200, 200)),
-                    BorderFactory.createEmptyBorder(5, 5, 5, 5)
-            ));
-        });
+        Timer timer = new Timer(2000, e -> field.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        )));
         timer.setRepeats(false);
         timer.start();
 
