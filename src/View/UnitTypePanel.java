@@ -295,7 +295,12 @@ public class UnitTypePanel {
                 boolean found = false;
                 for (int i = 0; i < unitTypes.size(); i++) {
                     if (unitTypes.get(i).getId() == id) {
-                        unitTypes.set(i, new UnitType(id, name, conversionRate));
+                        UnitType unitType = new UnitType();
+                        unitType.setId(id);
+                        unitType.setName(name);
+                        unitType.setConversionToBaseUnit(conversionRate);
+                        unitTypes.set(i, unitType);
+                        unitType.updateUnitType();
                         found = true;
                         break;
                     }
@@ -304,6 +309,8 @@ public class UnitTypePanel {
                 if (found) {
                     // Update unit type combo boxes
                     updateUnitTypeComboBoxes();
+                    unitTypeIdField.setText(String.valueOf(unitTypes.size() + 1));
+                    unitTypeIdField.requestFocusInWindow();
                     showMessage("Unit Type updated successfully!", "success");
                 } else {
                     showMessage("Unit Type with ID " + id + " not found", "error");
