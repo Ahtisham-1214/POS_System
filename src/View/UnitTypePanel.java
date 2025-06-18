@@ -105,7 +105,10 @@ public class UnitTypePanel {
 
         unitTypeIdField = createStyledTextField();
         unitTypeIdField.setEditable(false);
-        unitTypeIdField.setText(String.valueOf(unitTypes.getLast().getId() + 1));
+        if (!unitTypes.isEmpty())
+            unitTypeIdField.setText(String.valueOf(unitTypes.getLast().getId() + 1));
+        else
+            unitTypeIdField.setText("1");
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(unitTypeIdField, gbc);
