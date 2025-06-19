@@ -62,7 +62,9 @@ public class CategoryDatabase {
                 while(resultSet.next()) {
                     int id = resultSet.getInt("id");
                     String name = resultSet.getString("name");
-                    Category category = new Category(id, name);
+                    Category category = new Category();
+                    category.setId(id);
+                    category.setName(name);
                     categories.add(category);
                 }
             }
