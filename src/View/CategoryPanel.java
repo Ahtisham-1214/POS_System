@@ -20,7 +20,7 @@ public class CategoryPanel {
     private final JButton updateCategoryButton;
     private final JButton deleteCategoryButton;
     private final JLabel categoryMessageLabel;
-    private static JComboBox<String> categoryComboBox = new JComboBox<>();
+    private static final JComboBox<String> categoryComboBox = new JComboBox<>();
 
 
     private static final Color PRIMARY_COLOR = new Color(70, 130, 180); // Steel Blue
@@ -105,10 +105,7 @@ public class CategoryPanel {
         formPanel.add(idLabel, gbc);
 
         categoryIdField = createStyledTextField();
-        if (!categories.isEmpty())
-            categoryIdField.setText(String.valueOf(categories.getLast().getId() + 1));
-        else
-            categoryIdField.setText("1");
+        categoryIdField.setText(getId());
         categoryIdField.setEditable(false);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
@@ -236,7 +233,7 @@ public class CategoryPanel {
 
                 showMessage("Category added successfully!", "success");
                 clearCategoryFields();
-                categoryIdField.setText(String.valueOf(categories.getLast().getId() + 1));
+                categoryIdField.setText(getId());
             } catch (Exception ex) {
                 showMessage("Error adding category: " + ex.getMessage(), "error");
             } finally {
@@ -281,7 +278,7 @@ public class CategoryPanel {
                     // Update category combo box in the product tab
                     updateCategoryComboBox();
                     clearCategoryFields();
-                    categoryIdField.setText(String.valueOf(categories.getLast().getId() + 1));
+                    categoryIdField.setText(getId());
                     showMessage("Category updated successfully!", "success");
                 } else {
                     showMessage("Category with ID " + id + " not found", "error");
@@ -335,7 +332,7 @@ public class CategoryPanel {
                     updateCategoryComboBox();
                     showMessage("Category deleted successfully!", "success");
                     clearCategoryFields();
-                    categoryIdField.setText(String.valueOf(categories.getLast().getId() + 1));
+                    categoryIdField.setText(getId());
                 } else {
                     showMessage("Category with ID " + id + " not found", "error");
                 }
@@ -350,7 +347,7 @@ public class CategoryPanel {
 
     private void clearCategoryFields() {
         // Clear all input fields
-//        categoryIdField.setText("");
+        categoryIdField.setText(getId());
         categoryNameField.setText("");
         searchField.setText("");
 
@@ -469,4 +466,10 @@ public class CategoryPanel {
         field.requestFocusInWindow();
     }
 
+    private String getId() {
+        if(!categories.isEmpty())
+            return String.valueOf(categories.getLast().getId() + 1);
+        else
+            return "1";
+    }
 }
