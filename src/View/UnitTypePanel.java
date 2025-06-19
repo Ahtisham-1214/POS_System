@@ -293,7 +293,7 @@ public class UnitTypePanel {
 
                 showMessage("Unit Type added successfully!", "success");
                 clearUnitTypeFields();
-                unitTypeIdField.setText(String.valueOf(unitTypes.getLast().getId() + 1));
+                unitTypeIdField.setText(getId());
             } catch (Exception ex) {
                 showMessage("Error adding unit type: " + ex.getMessage(), "error");
             } finally {
@@ -340,7 +340,7 @@ public class UnitTypePanel {
                     // Update unit type combo boxes
                     updateUnitTypeComboBoxes();
                     clearUnitTypeFields();
-                    unitTypeIdField.setText(String.valueOf(unitTypes.getLast().getId() + 1));
+                    unitTypeIdField.setText(getId());
                     unitTypeNameField.requestFocusInWindow();
                     showMessage("Unit Type updated successfully!", "success");
                 } else {
@@ -395,7 +395,7 @@ public class UnitTypePanel {
                     updateUnitTypeComboBoxes();
                     showMessage("Unit Type deleted successfully!", "success");
                     clearUnitTypeFields();
-                    unitTypeIdField.setText(String.valueOf(unitTypes.getLast().getId() + 1));
+                    unitTypeIdField.setText(getId());
                     unitTypeNameField.requestFocusInWindow();
                 } else {
                     showMessage("Unit Type with ID " + id + " not found", "error");
@@ -411,7 +411,7 @@ public class UnitTypePanel {
 
     private void clearUnitTypeFields() {
         // Clear all input fields
-        unitTypeIdField.setText(String.valueOf(unitTypes.getLast().getId() + 1));
+        unitTypeIdField.setText(getId());
         unitTypeNameField.setText("");
         conversionRateField.setText("");
         searchField.setText("");
@@ -503,4 +503,10 @@ public class UnitTypePanel {
         }
     }
 
+    private String getId(){
+        if (!unitTypes.isEmpty())
+            return String.valueOf(unitTypes.getLast().getId() + 1);
+        else
+            return "1";
+    }
 }
