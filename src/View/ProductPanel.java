@@ -1,5 +1,6 @@
 package View;
 
+import Controller.Category;
 import Controller.Product;
 import Controller.UnitType;
 
@@ -29,7 +30,6 @@ public class ProductPanel extends JPanel {
 
     // Product Variant tab components
     private JPanel variantPanel;
-    private JComboBox<String> productComboBox;
 
     // Category tab components
     private JPanel categoryPanel;
@@ -71,9 +71,9 @@ public class ProductPanel extends JPanel {
 
 
     private void updateProductComboBox() {
-        productComboBox.removeAllItems();
+        ProductVariantPanel.getProductComboBox().removeAllItems();
         for (Product product : products) {
-            productComboBox.addItem(product.getId() + " - " + product.getName());
+            ProductVariantPanel.getProductComboBox().addItem(product.getName());
         }
     }
 
@@ -157,7 +157,7 @@ public class ProductPanel extends JPanel {
         formPanel.add(idLabel, gbc);
 
         productIdField = createStyledTextField();
-        productIdField.setText(String.valueOf(products.size() + 1));
+        productIdField.setText(getId());
         productIdField.setEditable(false);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
@@ -389,13 +389,14 @@ public class ProductPanel extends JPanel {
                 updateProductComboBox();
 
                 showMessage("Product added successfully!", "success");
-                clearProductFields();
-                productIdField.setText(String.valueOf(products.size() + 1));
             } catch (Exception ex) {
                 showMessage("Error adding product: " + ex.getMessage(), "error");
             } finally {
                 addProductButton.setText("Add");
                 addProductButton.setEnabled(true);
+                clearProductFields();
+                productIdField.setText(getId());
+                productNameField.requestFocusInWindow();
             }
         }
     }
@@ -441,6 +442,9 @@ public class ProductPanel extends JPanel {
             } finally {
                 updateProductButton.setText("Update");
                 updateProductButton.setEnabled(true);
+                clearProductFields();
+                productIdField.setText(getId());
+                productNameField.requestFocusInWindow();
             }
         }
     }
@@ -483,8 +487,6 @@ public class ProductPanel extends JPanel {
                     // Update product combo box in variant tab
                     updateProductComboBox();
                     showMessage("Product deleted successfully!", "success");
-                    clearProductFields();
-                    productIdField.setText(String.valueOf(products.size()));
                 } else {
                     showMessage("Product with ID " + id + " not found", "error");
                 }
@@ -493,6 +495,9 @@ public class ProductPanel extends JPanel {
             } finally {
                 deleteProductButton.setText("Delete");
                 deleteProductButton.setEnabled(true);
+                clearProductFields();
+                productIdField.setText(getId());
+                productNameField.requestFocusInWindow();
             }
         }
     }
@@ -500,7 +505,7 @@ public class ProductPanel extends JPanel {
 
     private void clearProductFields() {
         // Clear all input fields
-//        productIdField.setText("");
+        productIdField.setText(getId());
         productNameField.setText("");
 
         // Reset combo boxes to the first item if available
@@ -562,30 +567,66 @@ public class ProductPanel extends JPanel {
         if (selected == null || selected.isEmpty()) {
             return -1;
         }
+        try {
+            // First check if the selected value is just the unit type name (like "ml")
+            if (!selected.contains(" - ")) {
+                return findCategoryTypeIdByName(selected);
+            }
 
-        // Extract ID from the format "ID - Name"
-        return Integer.parseInt(selected.split(" - ")[0]);
+            // If it's in "ID - Name" format, extract the ID
+            return Integer.parseInt(selected.split(" - ")[0]);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+
     }
 
     private int getUnitTypeIdFromComboBox() {
-        JComboBox<String> comboBox =   unitTypeComboBox;
-        String selected = (String) comboBox.getSelectedItem();
+        String selected = (String) unitTypeComboBox.getSelectedItem();
         if (selected == null || selected.isEmpty()) {
             return -1;
         }
+        try {
+            // First check if the selected value is just the unit type name (like "ml")
+            if (!selected.contains(" - ")) {
+                return findUnitTypeIdByName(selected);
+            }
 
-        // Extract ID from the format "ID - Name"
-        return Integer.parseInt(selected.split(" - ")[0]);
+            // If it's in "ID - Name" format, extract the ID
+            return Integer.parseInt(selected.split(" - ")[0]);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
-    private int getProductIdFromComboBox() {
-        String selected = (String) productComboBox.getSelectedItem();
-        if (selected == null || selected.isEmpty()) {
-            return -1;
-        }
 
-        // Extract ID from the format "ID - Name"
-        return Integer.parseInt(selected.split(" - ")[0]);
+    private int findUnitTypeIdByName(String unitTypeName) {
+        // You'll need to implement this based on your UnitType data structure
+        // This is just an example - adjust according to your actual UnitType implementation
+        for (UnitType unitType : unitTypes) {
+            if (unitType.getName().equalsIgnoreCase(unitTypeName)) {
+                return unitType.getId();
+            }
+        }
+        return -1;
+    }
+
+    private int findCategoryTypeIdByName(String categoryName) {
+        // You'll need to implement this based on your UnitType data structure
+        // This is just an example - adjust according to your actual UnitType implementation
+        for (Category category : Category.categories) {
+            if (category.getName().equalsIgnoreCase(categoryName)) {
+                return category.getId();
+            }
+        }
+        return -1;
+    }
+
+    private String getId(){
+        if (!products.isEmpty()){
+            return String.valueOf(products.getLast().getId() + 1);
+        }
+        return "1";
     }
 
 }
