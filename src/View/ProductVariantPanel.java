@@ -1,5 +1,6 @@
 package View;
 
+import Controller.Product;
 import Controller.ProductVariant;
 import Controller.UnitType;
 
@@ -8,6 +9,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import static Controller.Product.products;
 import static Controller.ProductVariant.productVariants;
 import static Controller.UnitType.unitTypes;
 
@@ -24,9 +26,9 @@ public class ProductVariantPanel {
 
 
     private JTextField variantIdField;
-    private JComboBox<String> productComboBox;
+    private static final JComboBox<String> productComboBox = new JComboBox<>();
     private JTextField unitQuantityField;
-    private static JComboBox<String> variantUnitTypeComboBox =  new JComboBox<>();
+    private  static JComboBox<String> variantUnitTypeComboBox =  new JComboBox<>();
     private JTextField variantPriceField;
     private JButton addVariantButton;
     private JButton updateVariantButton;
@@ -37,6 +39,10 @@ public class ProductVariantPanel {
 
     public static JComboBox<String> getVariantUnitTypeComboBox() {
         return variantUnitTypeComboBox;
+    }
+
+    public static JComboBox<String> getProductComboBox() {
+        return productComboBox;
     }
 
     public JPanel getPanel() {
@@ -93,7 +99,6 @@ public class ProductVariantPanel {
             gbc.anchor = GridBagConstraints.EAST;
             formPanel.add(productLabel, gbc);
 
-            productComboBox = new JComboBox<>();
             productComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
             productComboBox.setToolTipText("Select the product");
             gbc.gridx = 1;
@@ -182,6 +187,16 @@ public class ProductVariantPanel {
 
             panel.add(formPanel, BorderLayout.CENTER);
 
+            getVariantUnitTypeComboBox().removeAllItems();
+            for (UnitType unitType : unitTypes) {
+                getVariantUnitTypeComboBox().addItem(unitType.getName());
+            }
+
+            getProductComboBox().removeAllItems();
+            for (Product product : products) {
+                getProductComboBox().addItem(product.getName());
+            }
+
     }
 
     private void addProductVariant() {
@@ -197,7 +212,7 @@ public class ProductVariantPanel {
                 int productId = getProductIdFromComboBox();
 
                 // Get selected unit type ID
-                int unitTypeId = getUnitTypeIdFromComboBox(false);
+                int unitTypeId = getUnitTypeIdFromComboBox();
 
                 // Create a new product variant
                 int id = Integer.parseInt(variantIdField.getText().trim());
@@ -207,11 +222,11 @@ public class ProductVariantPanel {
                 ProductVariant variant = new ProductVariant(id, productId, unitQuantity, unitTypeId, price);
                 productVariants.add(variant);
 
-                showMessage("Product variant added successfully!", "success", false);
+                showMessage("Product variant added successfully!", "success");
                 clearVariantFields();
                 variantIdField.setText(String.valueOf(productVariants.size() + 1));
             } catch (Exception ex) {
-                showMessage("Error adding product variant: " + ex.getMessage(), "error", false);
+                showMessage("Error adding product variant: " + ex.getMessage(), "error");
             } finally {
                 addVariantButton.setText("Add");
                 addVariantButton.setEnabled(true);
@@ -223,7 +238,7 @@ public class ProductVariantPanel {
         if (validateVariantFields()) {
             // Validate that ID is provided for update
             if (variantIdField.getText().trim().isEmpty()) {
-                showMessage("Please enter a variant ID to update", "error", false);
+                showMessage("Please enter a variant ID to update", "error");
                 highlightErrorField(variantIdField);
                 return;
             }
@@ -236,7 +251,7 @@ public class ProductVariantPanel {
                 int id = Integer.parseInt(variantIdField.getText().trim());
                 int productId = getProductIdFromComboBox();
                 float unitQuantity = Float.parseFloat(unitQuantityField.getText().trim());
-                int unitTypeId = getUnitTypeIdFromComboBox(false);
+                int unitTypeId = getUnitTypeIdFromComboBox();
                 float price = Float.parseFloat(variantPriceField.getText().trim());
 
                 // Find and update the product variant
@@ -250,12 +265,12 @@ public class ProductVariantPanel {
                 }
 
                 if (found) {
-                    showMessage("Product variant updated successfully!", "success", false);
+                    showMessage("Product variant updated successfully!", "success");
                 } else {
-                    showMessage("Product variant with ID " + id + " not found", "error", false);
+                    showMessage("Product variant with ID " + id + " not found", "error");
                 }
             } catch (Exception ex) {
-                showMessage("Error updating product variant: " + ex.getMessage(), "error", false);
+                showMessage("Error updating product variant: " + ex.getMessage(), "error");
             } finally {
                 updateVariantButton.setText("Update");
                 updateVariantButton.setEnabled(true);
@@ -265,7 +280,7 @@ public class ProductVariantPanel {
 
     private void deleteProductVariant() {
         if (variantIdField.getText().trim().isEmpty()) {
-            showMessage("Please enter a variant ID to delete", "error", false);
+            showMessage("Please enter a variant ID to delete", "error");
             highlightErrorField(variantIdField);
             return;
         }
@@ -298,15 +313,15 @@ public class ProductVariantPanel {
                 }
 
                 if (found) {
-                    showMessage("Product variant deleted successfully!", "success", false);
+                    showMessage("Product variant deleted successfully!", "success");
                     clearVariantFields();
                     variantIdField.setText(String.valueOf(productVariants.size()));
 
                 } else {
-                    showMessage("Product variant with ID " + id + " not found", "error", false);
+                    showMessage("Product variant with ID " + id + " not found", "error");
                 }
             } catch (Exception ex) {
-                showMessage("Error deleting product variant: " + ex.getMessage(), "error", false);
+                showMessage("Error deleting product variant: " + ex.getMessage(), "error");
             } finally {
                 deleteVariantButton.setText("Delete");
                 deleteVariantButton.setEnabled(true);
@@ -382,7 +397,7 @@ public class ProductVariantPanel {
         return button;
     }
 
-    private void showMessage(String message, String type, boolean isProductTab) {
+    private void showMessage(String message, String type) {
         JLabel messageLabel;
             messageLabel = variantMessageLabel;
 
@@ -411,7 +426,7 @@ public class ProductVariantPanel {
     private boolean validateVariantFields() {
         // Basic validation
         if (variantIdField.getText().trim().isEmpty()) {
-            showMessage("Variant ID cannot be empty", "error", false);
+            showMessage("Variant ID cannot be empty", "error");
             highlightErrorField(variantIdField);
             return false;
         }
@@ -419,18 +434,18 @@ public class ProductVariantPanel {
         try {
             Integer.parseInt(variantIdField.getText().trim());
         } catch (NumberFormatException e) {
-            showMessage("Variant ID must be a number", "error", false);
+            showMessage("Variant ID must be a number", "error");
             highlightErrorField(variantIdField);
             return false;
         }
 
         if (productComboBox.getSelectedIndex() == -1) {
-            showMessage("Please select a product", "error", false);
+            showMessage("Please select a product", "error");
             return false;
         }
 
         if (unitQuantityField.getText().trim().isEmpty()) {
-            showMessage("Unit quantity cannot be empty", "error", false);
+            showMessage("Unit quantity cannot be empty", "error");
             highlightErrorField(unitQuantityField);
             return false;
         }
@@ -438,18 +453,18 @@ public class ProductVariantPanel {
         try {
             Float.parseFloat(unitQuantityField.getText().trim());
         } catch (NumberFormatException e) {
-            showMessage("Unit quantity must be a number", "error", false);
+            showMessage("Unit quantity must be a number", "error");
             highlightErrorField(unitQuantityField);
             return false;
         }
 
         if (variantUnitTypeComboBox.getSelectedIndex() == -1) {
-            showMessage("Please select a unit type", "error", false);
+            showMessage("Please select a unit type", "error");
             return false;
         }
 
         if (variantPriceField.getText().trim().isEmpty()) {
-            showMessage("Price cannot be empty", "error", false);
+            showMessage("Price cannot be empty", "error");
             highlightErrorField(variantPriceField);
             return false;
         }
@@ -457,7 +472,7 @@ public class ProductVariantPanel {
         try {
             Float.parseFloat(variantPriceField.getText().trim());
         } catch (NumberFormatException e) {
-            showMessage("Price must be a number", "error", false);
+            showMessage("Price must be a number", "error");
             highlightErrorField(variantPriceField);
             return false;
         }
@@ -495,8 +510,8 @@ public class ProductVariantPanel {
         return Integer.parseInt(selected.split(" - ")[0]);
     }
 
-    private int getUnitTypeIdFromComboBox(boolean isProductTab) {
-        JComboBox<String> comboBox = isProductTab ? UnitTypePanel.getUnitTypeComboBox() : variantUnitTypeComboBox;
+    private int getUnitTypeIdFromComboBox() {
+        JComboBox<String> comboBox = variantUnitTypeComboBox;
         String selected = (String) comboBox.getSelectedItem();
         if (selected == null || selected.isEmpty()) {
             return -1;
