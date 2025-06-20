@@ -1,5 +1,8 @@
 package Controller;
 
+import Model.ProductDatabase;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Product {
@@ -9,7 +12,15 @@ public class Product {
     private int unitTypeId;
     private float pricePerUnit;
 
-    public static ArrayList<Product> products = new ArrayList<Product>();
+    public static ArrayList<Product> products;
+
+    static {
+        try {
+            products = new ProductDatabase().getProducts();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public Product(int id, String name, int categoryID, int unitTypeId, float pricePerUnit) {
         this.setId(id);
@@ -24,6 +35,10 @@ public class Product {
         this.setName(name);
         this.setCategoryID(categoryID);
         this.setUnitTypeId(unitTypeId);
+    }
+
+    public Product(){
+
     }
 
     public int getId() {
