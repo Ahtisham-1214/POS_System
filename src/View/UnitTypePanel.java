@@ -466,10 +466,11 @@ public class UnitTypePanel {
 
     private void updateUnitTypeComboBoxes() {
         getUnitTypeComboBox().removeAllItems();
-
+        ProductVariantPanel.getVariantUnitTypeComboBox().removeAllItems();
         for (UnitType unitType : unitTypes) {
             String item = unitType.getName();
             getUnitTypeComboBox().addItem(item);
+            ProductVariantPanel.getVariantUnitTypeComboBox().addItem(item);
         }
     }
 
