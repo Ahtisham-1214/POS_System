@@ -20,6 +20,9 @@ public class DashboardPanel extends JPanel {
 
     private MainFrame parentFrame;
 
+    // Reference to the Total Products value label for dynamic updates
+    private JLabel totalProductsLabel;
+
     // Define colors for better UI consistency
     private static final Color PRIMARY_COLOR = new Color(70, 130, 180); // Steel Blue
     private static final Color SIDEBAR_BG = new Color(35, 47, 62); // Dark blue-gray
@@ -283,7 +286,7 @@ public class DashboardPanel extends JPanel {
         addDashboardCards(homePanel);
 
         // Inventory Panel - Using ProductPanel for product management
-        inventoryPanel = new ProductPanel();
+        inventoryPanel = new ProductPanel(this);
 
         // Sales Panel with improved styling
         salesPanel = createStyledPanel("Sales Management");
@@ -352,10 +355,23 @@ public class DashboardPanel extends JPanel {
         contentPanel.setLayout(new GridLayout(2, 2, 15, 15));
 
         // Add summary cards
-        contentPanel.add(createSummaryCard("Total Products", String.valueOf(Product.getTotalProducts()), new Color(41, 128, 185)));
+        JPanel totalProductsCard = createSummaryCard("Total Products", String.valueOf(Product.getTotalProducts()), new Color(41, 128, 185));
+        // Store reference to the value label for dynamic updates
+        totalProductsLabel = (JLabel) ((JPanel)totalProductsCard.getComponent(1)).getComponent(1);
+
+        contentPanel.add(totalProductsCard);
         contentPanel.add(createSummaryCard("Today's Sales", "$3,890", new Color(39, 174, 96)));
         contentPanel.add(createSummaryCard("Total Customers", "856", new Color(142, 68, 173)));
         contentPanel.add(createSummaryCard("Pending Orders", "12", new Color(230, 126, 34)));
+    }
+
+    /**
+     * Updates the Total Products count on the dashboard
+     */
+    public void updateTotalProductsCount() {
+        if (totalProductsLabel != null) {
+            totalProductsLabel.setText(String.valueOf(Product.getTotalProducts()));
+        }
     }
 
     /**
