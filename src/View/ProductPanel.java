@@ -37,6 +37,9 @@ public class ProductPanel extends JPanel {
     // Unit Type tab components
     private JPanel unitTypePanel;
 
+    // Reference to the dashboard panel for updating product count
+    private DashboardPanel dashboardPanel;
+
 
     // Define colors for better UI consistency
     private static final Color PRIMARY_COLOR = new Color(70, 130, 180); // Steel Blue
@@ -48,6 +51,16 @@ public class ProductPanel extends JPanel {
     private static final Color PANEL_BACKGROUND = Color.WHITE;
 
     public ProductPanel() {
+        initializeUI();
+        loadData();
+    }
+
+    /**
+     * Constructor that accepts a dashboard panel for updating product count
+     * @param dashboardPanel The dashboard panel to update
+     */
+    public ProductPanel(DashboardPanel dashboardPanel) {
+        this.dashboardPanel = dashboardPanel;
         initializeUI();
         loadData();
     }
@@ -388,6 +401,11 @@ public class ProductPanel extends JPanel {
                 // Update product combo box in variant tab
                 updateProductComboBox();
 
+                // Update dashboard product count if dashboard panel is available
+                if (dashboardPanel != null) {
+                    dashboardPanel.updateTotalProductsCount();
+                }
+
                 showMessage("Product added successfully!", "success");
             } catch (Exception ex) {
                 showMessage("Error adding product: " + ex.getMessage(), "error");
@@ -433,6 +451,12 @@ public class ProductPanel extends JPanel {
                 if (found) {
                     // Update product combo box in variant tab
                     updateProductComboBox();
+
+                    // Update dashboard product count if dashboard panel is available
+                    if (dashboardPanel != null) {
+                        dashboardPanel.updateTotalProductsCount();
+                    }
+
                     showMessage("Product updated successfully!", "success");
                 } else {
                     showMessage("Product with ID " + id + " not found", "error");
@@ -486,6 +510,12 @@ public class ProductPanel extends JPanel {
                 if (found) {
                     // Update product combo box in variant tab
                     updateProductComboBox();
+
+                    // Update dashboard product count if dashboard panel is available
+                    if (dashboardPanel != null) {
+                        dashboardPanel.updateTotalProductsCount();
+                    }
+
                     showMessage("Product deleted successfully!", "success");
                 } else {
                     showMessage("Product with ID " + id + " not found", "error");
