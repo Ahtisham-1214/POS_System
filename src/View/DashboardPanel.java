@@ -14,7 +14,7 @@ public class DashboardPanel extends JPanel {
     // Panels for different sections
     private JPanel homePanel;
     private ProductPanel inventoryPanel;
-    private JPanel salesPanel;
+    private SalesPanel salesPanel;
     private JPanel reportsPanel;
     private JPanel settingsPanel;
 
@@ -288,9 +288,8 @@ public class DashboardPanel extends JPanel {
         // Inventory Panel - Using ProductPanel for product management
         inventoryPanel = new ProductPanel(this);
 
-        // Sales Panel with improved styling
-        salesPanel = createStyledPanel("Sales Management");
-        addSalesPlaceholder(salesPanel);
+        // Sales Panel - Using SalesPanel for sales management
+        salesPanel = new SalesPanel();
 
         // Reports Panel with improved styling
         reportsPanel = createStyledPanel("Reports and Analytics");
@@ -414,46 +413,6 @@ public class DashboardPanel extends JPanel {
         card.add(textPanel, BorderLayout.CENTER);
 
         return card;
-    }
-
-    /**
-     * Adds placeholder content to the sales panel
-     * @param panel The sales panel
-     */
-    private void addSalesPlaceholder(JPanel panel) {
-        JPanel contentPanel = (JPanel) panel.getComponent(1);
-        contentPanel.setLayout(new BorderLayout());
-
-        JLabel placeholderLabel = new JLabel("Sales Management Module Coming Soon", SwingConstants.CENTER);
-        placeholderLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        placeholderLabel.setForeground(new Color(100, 100, 100));
-
-        JPanel infoPanel = new JPanel(new GridLayout(3, 1, 0, 10));
-        infoPanel.setBackground(PANEL_BG);
-        infoPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-            BorderFactory.createEmptyBorder(30, 30, 30, 30)
-        ));
-
-        infoPanel.add(placeholderLabel);
-        infoPanel.add(new JLabel("This module will allow you to manage sales transactions, invoices, and customer orders.", SwingConstants.CENTER));
-
-        JButton demoButton = new JButton("View Demo");
-        demoButton.setFont(new Font("Arial", Font.BOLD, 14));
-        demoButton.setBackground(PRIMARY_COLOR);
-        demoButton.setForeground(Color.WHITE);
-        demoButton.setFocusPainted(false);
-        demoButton.setBorderPainted(false);
-        demoButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        demoButton.setMaximumSize(new Dimension(150, 40));
-        demoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.setBackground(PANEL_BG);
-        buttonPanel.add(demoButton);
-        infoPanel.add(buttonPanel);
-
-        contentPanel.add(infoPanel, BorderLayout.CENTER);
     }
 
     /**
