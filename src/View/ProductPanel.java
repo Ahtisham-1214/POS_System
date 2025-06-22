@@ -13,11 +13,7 @@ import static Controller.Product.products;
 import static Controller.UnitType.unitTypes;
 
 public class ProductPanel extends JPanel {
-    // UI Components
-    private JTabbedPane tabbedPane;
 
-    // Product tab components
-    private JPanel productPanel;
     private JTextField productIdField;
     private JTextField productNameField;
     private JComboBox<String> categoryComboBox;
@@ -25,17 +21,7 @@ public class ProductPanel extends JPanel {
     private JButton addProductButton;
     private JButton updateProductButton;
     private JButton deleteProductButton;
-    private JButton clearProductButton;
     private JLabel productMessageLabel;
-
-    // Product Variant tab components
-    private JPanel variantPanel;
-
-    // Category tab components
-    private JPanel categoryPanel;
-
-    // Unit Type tab components
-    private JPanel unitTypePanel;
 
     // Reference to the dashboard panel for updating product count
     private DashboardPanel dashboardPanel;
@@ -85,8 +71,10 @@ public class ProductPanel extends JPanel {
 
     private void updateProductComboBox() {
         ProductVariantPanel.getProductComboBox().removeAllItems();
+        SalesPanel.getProductComboBox().removeAllItems();
         for (Product product : products) {
             ProductVariantPanel.getProductComboBox().addItem(product.getName());
+            SalesPanel.getProductComboBox().addItem(product.getName());
         }
     }
 
@@ -108,24 +96,29 @@ public class ProductPanel extends JPanel {
         titlePanel.add(titleLabel, BorderLayout.CENTER);
 
         // Create a tabbed pane
-        tabbedPane = new JTabbedPane();
+        // UI Components
+        JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setFont(new Font("Arial", Font.PLAIN, 14));
         tabbedPane.setBackground(BACKGROUND_COLOR);
 
         // Create product panel
-        productPanel = createProductPanel();
+        // Product tab components
+        JPanel productPanel = createProductPanel();
         tabbedPane.addTab("Products", productPanel);
 
         // Create variant panel
-        variantPanel = new ProductVariantPanel().getPanel();
+        // Product Variant tab components
+        JPanel variantPanel = new ProductVariantPanel().getPanel();
         tabbedPane.addTab("Product Variants", variantPanel);
 
-        // Create category panel
-        categoryPanel = new CategoryPanel().getPanel();
+        // Create a category panel
+        // Category tab components
+        JPanel categoryPanel = new CategoryPanel().getPanel();
         tabbedPane.addTab("Categories", categoryPanel);
 
         // Create a unit type panel
-        unitTypePanel = new UnitTypePanel().getPanel();
+        // Unit Type tab components
+        JPanel unitTypePanel = new UnitTypePanel().getPanel();
         tabbedPane.addTab("Unit Types", unitTypePanel);
 
         // Add components to the main panel
@@ -238,7 +231,7 @@ public class ProductPanel extends JPanel {
         deleteProductButton.setToolTipText("Delete the selected product");
         deleteProductButton.setBackground(new Color(220, 53, 69)); // Bootstrap danger red
 
-        clearProductButton = createStyledButton("Clear");
+        JButton clearProductButton = createStyledButton("Clear");
         clearProductButton.setToolTipText("Clear all fields");
         clearProductButton.setBackground(new Color(108, 117, 125)); // Bootstrap secondary gray
 
@@ -362,7 +355,7 @@ public class ProductPanel extends JPanel {
             BorderFactory.createEmptyBorder(4, 4, 4, 4)
         ));
 
-        // Reset border after 2 seconds
+        // Reset the border after 2 seconds
         Timer timer = new Timer(2000, e -> {
             field.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(200, 200, 200)),
@@ -401,7 +394,7 @@ public class ProductPanel extends JPanel {
                 // Update product combo box in variant tab
                 updateProductComboBox();
 
-                // Update dashboard product count if dashboard panel is available
+                // Update dashboard product count if a dashboard panel is available
                 if (dashboardPanel != null) {
                     dashboardPanel.updateTotalProductsCount();
                 }
@@ -452,7 +445,7 @@ public class ProductPanel extends JPanel {
                     // Update product combo box in variant tab
                     updateProductComboBox();
 
-                    // Update dashboard product count if dashboard panel is available
+                    // Update dashboard product count if a dashboard panel is available
                     if (dashboardPanel != null) {
                         dashboardPanel.updateTotalProductsCount();
                     }
@@ -511,7 +504,7 @@ public class ProductPanel extends JPanel {
                     // Update product combo box in variant tab
                     updateProductComboBox();
 
-                    // Update dashboard product count if dashboard panel is available
+                    // Update dashboard product count if a dashboard panel is available
                     if (dashboardPanel != null) {
                         dashboardPanel.updateTotalProductsCount();
                     }
@@ -632,7 +625,7 @@ public class ProductPanel extends JPanel {
 
     private int findUnitTypeIdByName(String unitTypeName) {
         // You'll need to implement this based on your UnitType data structure
-        // This is just an example - adjust according to your actual UnitType implementation
+        // This is just an example - adjusting, according to your actual UnitType implementation
         for (UnitType unitType : unitTypes) {
             if (unitType.getName().equalsIgnoreCase(unitTypeName)) {
                 return unitType.getId();
@@ -643,7 +636,7 @@ public class ProductPanel extends JPanel {
 
     private int findCategoryTypeIdByName(String categoryName) {
         // You'll need to implement this based on your UnitType data structure
-        // This is just an example - adjust according to your actual UnitType implementation
+        // This is just an example - adjusting, according to your actual UnitType implementation
         for (Category category : Category.categories) {
             if (category.getName().equalsIgnoreCase(categoryName)) {
                 return category.getId();
