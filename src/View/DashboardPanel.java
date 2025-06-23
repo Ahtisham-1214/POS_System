@@ -319,20 +319,6 @@ public class DashboardPanel extends JPanel {
         titleLabel.setForeground(Color.WHITE);
         headerPanel.add(titleLabel, BorderLayout.WEST);
 
-        // Add a search field to the header (non-functional placeholder)
-        if (!title.equals("System Settings")) {
-            JTextField searchField = new JTextField(20);
-            searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200)),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
-            ));
-            searchField.setFont(new Font("Arial", Font.PLAIN, 14));
-            JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            searchPanel.setBackground(PRIMARY_COLOR);
-            searchPanel.add(new JLabel("Search:"));
-            searchPanel.add(searchField);
-            headerPanel.add(searchPanel, BorderLayout.EAST);
-        }
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
