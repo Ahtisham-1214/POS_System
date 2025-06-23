@@ -8,22 +8,21 @@ import java.util.Objects;
 import javax.swing.JOptionPane;
 
 public class MainFrame extends JFrame {
-    private LoginPanel loginPanel;
-    private DashboardPanel dashboardPanel;
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
+    private final LoginPanel loginPanel;
+    private final CardLayout cardLayout;
+    private final JPanel mainPanel;
 
     // Define application constants
     private static final String APP_NAME = "POS System";
     private static final String APP_VERSION = "1.0";
-    private static final Dimension MIN_SIZE = new Dimension(900, 650);
+    private static final Dimension MIN_SIZE = new Dimension(1050, 700);
 
     public MainFrame(String title) {
         // Set the application title with a version
         this.setTitle(APP_NAME + " " + APP_VERSION + " - " + title);
 
         // Set window properties
-        this.setPreferredSize(new Dimension(900, 650));
+        this.setPreferredSize(new Dimension(1050, 700));
         this.setMinimumSize(MIN_SIZE);
 //        this.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -44,7 +43,7 @@ public class MainFrame extends JFrame {
 
         // Initialize panels
         loginPanel = new LoginPanel(this);
-        dashboardPanel = new DashboardPanel(this);
+        DashboardPanel dashboardPanel = new DashboardPanel(this);
 
         // Add panels to the main panel with card names
         mainPanel.add(loginPanel, "login");
