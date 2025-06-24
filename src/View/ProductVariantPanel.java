@@ -505,20 +505,27 @@ public class ProductVariantPanel {
         if (selected == null || selected.isEmpty()) {
             return -1;
         }
+        for(Product product : products){
+            if(product.getName().equalsIgnoreCase(selected)){
+                return product.getId();
+            }
+        }
 
-        // Extract ID from the format "ID - Name"
-        return Integer.parseInt(selected.split(" - ")[0]);
+        return -1;
     }
 
     private int getUnitTypeIdFromComboBox() {
-        JComboBox<String> comboBox = variantUnitTypeComboBox;
-        String selected = (String) comboBox.getSelectedItem();
+        String selected = (String) variantUnitTypeComboBox.getSelectedItem();
         if (selected == null || selected.isEmpty()) {
             return -1;
         }
+        for(UnitType unitType : unitTypes){
+            if(unitType.getName().equalsIgnoreCase(selected)){
+                return unitType.getId();
+            }
+        }
 
-        // Extract ID from the format "ID - Name"
-        return Integer.parseInt(selected.split(" - ")[0]);
+        return -1;
     }
 
 }
