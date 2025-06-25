@@ -624,24 +624,26 @@ public class SalesPanel extends JPanel {
 
         boolean orderFound = false;
         tableModel.setRowCount(0);
+        cartItems.clear();
 
         for (Sales sales : getSales()) {
             if (sales.getOrderId().toLowerCase().contains(searchTerm)) {
                 orderFound = true;
                 orderIdField.setText(sales.getOrderId());
                 customerField.setText(sales.getCustomerName());
-//                for (int i = 0; i < sales.getCartItems().size(); i++) {
-//                    Object[] row = {
-//                    System.out.println(sales.getCartItems().get(i).getProduct().getId() +
-//                            sales.getCartItems().get(i).getProduct().getName() +
-//                            sales.getCartItems().get(i).getProduct().getPricePerUnit() +
-//                            sales.getCartItems().get(i).getQuantity() +
-//                            sales.getCartItems().get(i).getQuantity() * sales.getCartItems().get(i).getProduct().getPricePerUnit()
-//                    );
-//                    };
-//                    tableModel.addRow(row);
-                System.out.println(sales.getCartItems().size());
-//                }
+
+                // Update the table model
+                for (CartItem item: sales.getCartItems()) {
+                    Object[] row = {
+                            item.getProduct().getId(),
+                            item.getProduct().getName(),
+                            item.getProduct().getPricePerUnit(),
+                            item.getQuantity(),
+                            item.getQuantity() * item.getProduct().getPricePerUnit()
+                    };
+                    tableModel.addRow(row);
+                    cartItems.add(item);
+                }
                 updateTotalAmount();
                 break;
             }
