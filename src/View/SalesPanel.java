@@ -10,12 +10,10 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
-
+import static Controller.Sales.getSales;
 import static Controller.Product.products;
 
 public class SalesPanel extends JPanel {
@@ -419,7 +417,6 @@ public class SalesPanel extends JPanel {
         cartItems.remove(selectedRow);
 
         updateTotalAmount();
-        showMessage("Item removed from cart", "success");
     }
 
     private void clearCart() {
@@ -462,17 +459,18 @@ public class SalesPanel extends JPanel {
             return;
         }
 
-        Sales sales = new Sales(orderIdField.getText(), customerField.getText().trim());
-        sales.setDate(new Date());
+        Sales sale = new Sales(orderIdField.getText(), customerField.getText().trim(), new Date());
+        sale.setCartItems(cartItems);
+        getSales().add(sale);
 
         // Build receipt content
         StringBuilder receipt = new StringBuilder();
         receipt.append("===================================\n");
         receipt.append("            SALES RECEIPT          \n");
         receipt.append("===================================\n\n");
-        receipt.append("Order ID: ").append(sales.getOrderId()).append("\n");
-        receipt.append("Date: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(sales.getDate())).append("\n");
-        receipt.append("Customer: ").append(sales.getCustomerName()).append("\n\n");
+        receipt.append("Order ID: ").append(sale.getOrderId()).append("\n");
+        receipt.append("Date: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(sale.getDate())).append("\n");
+        receipt.append("Customer: ").append(sale.getCustomerName()).append("\n\n");
         receipt.append("-----------------------------------\n");
         receipt.append(String.format("%-5s %-20s %-8s %-8s %-10s\n", "ID", "Product", "Price", "Qty", "Total"));
         receipt.append("-----------------------------------\n");
@@ -490,7 +488,7 @@ public class SalesPanel extends JPanel {
         }
 
         receipt.append("-----------------------------------\n");
-        receipt.append(String.format("%-43s $%.2f\n", "TOTAL:", sales.getTotal()));
+        receipt.append(String.format("%-43s $%.2f\n", "TOTAL:", sale.getTotal()));
         receipt.append("===================================\n\n");
         receipt.append("Thank you for your purchase!\n");
         receipt.append("For services contact ✆ +923448143397 | ✉ ahtishamshaikh1214@gmail.com\n");
@@ -505,7 +503,7 @@ public class SalesPanel extends JPanel {
         JOptionPane.showMessageDialog(
             this,
             scrollPane,
-            "Receipt - Order #" + sales.getOrderId(),
+            "Receipt - Order #" + sale.getOrderId(),
             JOptionPane.INFORMATION_MESSAGE
         );
 
@@ -618,31 +616,39 @@ public class SalesPanel extends JPanel {
 
     private void searchOrder() {
         String searchTerm = searchField.getText().trim().toLowerCase();
+
         if (searchTerm.isEmpty()) {
-            // If search is empty, show all products
-            productComboBox.removeAllItems();
-            for (Product product : products) {
-                productComboBox.addItem(product.getName());
-            }
+            showMessage("Please enter search term", "error");
             return;
         }
 
-        // Filter products based on search term
-        productComboBox.removeAllItems();
-        for (Product product : products) {
-            if (product.getName().toLowerCase().contains(searchTerm)) {
-                productComboBox.addItem(product.getName());
+        boolean orderFound = false;
+        tableModel.setRowCount(0);
+
+        for (Sales sales : getSales()) {
+            if (sales.getOrderId().toLowerCase().contains(searchTerm)) {
+                orderFound = true;
+                orderIdField.setText(sales.getOrderId());
+                customerField.setText(sales.getCustomerName());
+//                for (int i = 0; i < sales.getCartItems().size(); i++) {
+//                    Object[] row = {
+//                    System.out.println(sales.getCartItems().get(i).getProduct().getId() +
+//                            sales.getCartItems().get(i).getProduct().getName() +
+//                            sales.getCartItems().get(i).getProduct().getPricePerUnit() +
+//                            sales.getCartItems().get(i).getQuantity() +
+//                            sales.getCartItems().get(i).getQuantity() * sales.getCartItems().get(i).getProduct().getPricePerUnit()
+//                    );
+//                    };
+//                    tableModel.addRow(row);
+                System.out.println(sales.getCartItems().size());
+//                }
+                updateTotalAmount();
+                break;
             }
         }
+        if (!orderFound)
+            showMessage("Order not found", "information");
 
-        // Update variants based on first product if any
-        if (productComboBox.getItemCount() > 0) {
-            productComboBox.setSelectedIndex(0);
-            updateVariantComboBox();
-        } else {
-            variantComboBox.removeAllItems();
-            showMessage("No products found matching your search", "information");
-        }
     }
 
     private void updateVariantComboBox() {
