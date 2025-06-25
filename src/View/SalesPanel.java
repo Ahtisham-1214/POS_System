@@ -460,7 +460,7 @@ public class SalesPanel extends JPanel {
         }
 
         Sales sale = new Sales(orderIdField.getText(), customerField.getText().trim(), new Date());
-        sale.setCartItems(cartItems);
+        sale.setCartItems(new ArrayList<>(cartItems));
         getSales().add(sale);
 
         // Build receipt content
