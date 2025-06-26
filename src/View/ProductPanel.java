@@ -17,7 +17,6 @@ public class ProductPanel extends JPanel {
     private JTextField productIdField;
     private JTextField productNameField;
     private JComboBox<String> categoryComboBox;
-    private JComboBox<String> unitTypeComboBox;
     private JButton addProductButton;
     private JButton updateProductButton;
     private JButton deleteProductButton;
@@ -59,13 +58,6 @@ public class ProductPanel extends JPanel {
 
         // Update combo boxes
         new CategoryPanel().updateCategoryComboBox();
-//        updateUnitTypeComboBoxes();
-        unitTypeComboBox.removeAllItems();
-
-        for (UnitType unitType : unitTypes) {
-            String item = unitType.getName();
-            unitTypeComboBox.addItem(item);
-        }
     }
 
 
@@ -196,19 +188,6 @@ public class ProductPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(categoryComboBox, gbc);
 
-        // Unit Type field
-        JLabel unitTypeLabel = createStyledLabel("Unit Type:");
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(unitTypeLabel, gbc);
-
-        unitTypeComboBox = UnitTypePanel.getUnitTypeComboBox();
-        unitTypeComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
-        unitTypeComboBox.setToolTipText("Select the unit type");
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(unitTypeComboBox, gbc);
 
 
         gbc.gridx = 1;
@@ -382,7 +361,7 @@ public class ProductPanel extends JPanel {
                 int categoryId = getCategoryIdFromComboBox();
 
                 // Get selected unit type ID
-                int unitTypeId = getUnitTypeIdFromComboBox();
+                int unitTypeId = 1;
 
                 // Create a new product
                 int id = Integer.parseInt(productIdField.getText().trim());
@@ -429,13 +408,13 @@ public class ProductPanel extends JPanel {
                 int id = Integer.parseInt(productIdField.getText().trim());
                 String name = productNameField.getText().trim();
                 int categoryId = getCategoryIdFromComboBox();
-                int unitTypeId = getUnitTypeIdFromComboBox();
+//                int unitTypeId = getUnitTypeIdFromComboBox();
 
                 // Find and update the product
                 boolean found = false;
                 for (int i = 0; i < products.size(); i++) {
                     if (products.get(i).getId() == id) {
-                        products.set(i, new Product(id, name, categoryId, unitTypeId));
+                        products.set(i, new Product(id, name, categoryId, 1));
                         found = true;
                         break;
                     }
@@ -536,9 +515,6 @@ public class ProductPanel extends JPanel {
             categoryComboBox.setSelectedIndex(0);
         }
 
-        if (unitTypeComboBox.getItemCount() > 0) {
-            unitTypeComboBox.setSelectedIndex(0);
-        }
 
         // Clear message only if it's not a success message
         if (!productMessageLabel.getForeground().equals(SUCCESS_COLOR)) {
@@ -577,10 +553,6 @@ public class ProductPanel extends JPanel {
             return false;
         }
 
-        if (unitTypeComboBox.getSelectedIndex() == -1) {
-            showMessage("Please select a unit type", "error");
-            return false;
-        }
         return true;
     }
 
@@ -604,35 +576,6 @@ public class ProductPanel extends JPanel {
 
     }
 
-    private int getUnitTypeIdFromComboBox() {
-        String selected = (String) unitTypeComboBox.getSelectedItem();
-        if (selected == null || selected.isEmpty()) {
-            return -1;
-        }
-        try {
-            // First check if the selected value is just the unit type name (like "ml")
-            if (!selected.contains(" - ")) {
-                return findUnitTypeIdByName(selected);
-            }
-
-            // If it's in "ID - Name" format, extract the ID
-            return Integer.parseInt(selected.split(" - ")[0]);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-
-
-    private int findUnitTypeIdByName(String unitTypeName) {
-        // You'll need to implement this based on your UnitType data structure
-        // This is just an example - adjusting, according to your actual UnitType implementation
-        for (UnitType unitType : unitTypes) {
-            if (unitType.getName().equalsIgnoreCase(unitTypeName)) {
-                return unitType.getId();
-            }
-        }
-        return -1;
-    }
 
     private int findCategoryTypeIdByName(String categoryName) {
         // You'll need to implement this based on your UnitType data structure
