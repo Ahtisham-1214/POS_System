@@ -13,6 +13,15 @@ public class Product {
     private float pricePerUnit;
 
     public static ArrayList<Product> products;
+    private ArrayList<ProductVariant> productVariants;
+
+    public ArrayList<ProductVariant> getProductVariants() {
+        return productVariants;
+    }
+
+    public void setProductVariants(ArrayList<ProductVariant> productVariants) {
+        this.productVariants = productVariants;
+    }
 
     static {
         try {
@@ -28,6 +37,7 @@ public class Product {
         this.setCategoryID(categoryID);
         this.setUnitTypeId(unitTypeId);
         this.setPricePerUnit(pricePerUnit);
+        this.productVariants = new ArrayList<>();
     }
 
     public Product(int id, String name, int categoryID, int unitTypeId ) {
@@ -35,6 +45,7 @@ public class Product {
         this.setName(name);
         this.setCategoryID(categoryID);
         this.setUnitTypeId(unitTypeId);
+        this.productVariants = new ArrayList<>();
     }
 
     public Product(){
