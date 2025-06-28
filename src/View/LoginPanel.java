@@ -135,6 +135,23 @@ public class LoginPanel extends JPanel {
         usernameField.setToolTipText("Enter your username");
         passwordField.setToolTipText("Enter your password");
 
+        // Add keyboard navigation between username and password fields
+        usernameField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN) {
+                    passwordField.requestFocus();
+                }
+            }
+        });
+
+        passwordField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP) {
+                    usernameField.requestFocus();
+                }
+            }
+        });
+
         loginButton.addActionListener(e -> {
             try {
                 // Show loading indicator
@@ -156,8 +173,18 @@ public class LoginPanel extends JPanel {
                             username = usernameField.getText().trim();
                             password = new String(passwordField.getPassword());
 
-                            if (username.isEmpty() || password.isEmpty()) {
+                            if (username.isEmpty() && password.isEmpty()) {
                                 errorMessage = "Username and password cannot be empty";
+                                return false;
+                            }
+
+                            if (username.isEmpty()) {
+                                errorMessage = "Username cannot be empty";
+                                return false;
+                            }
+                            if (password.isEmpty()) {
+                                errorMessage = "Password cannot be empty";
+                                passwordField.requestFocus();
                                 return false;
                             }
 
