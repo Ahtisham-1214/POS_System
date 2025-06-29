@@ -110,8 +110,15 @@ public class ProductPanel extends JPanel {
 
         // Create a unit type panel
         // Unit Type tab components
-        JPanel unitTypePanel = new UnitTypePanel().getPanel();
-        tabbedPane.addTab("Unit Types", unitTypePanel);
+        UnitTypePanel unitTypePanel = new UnitTypePanel(); // Store the panel instance
+        JPanel unitTypePanelComponent = unitTypePanel.getPanel();
+
+        tabbedPane.addTab("Unit Types", unitTypePanelComponent);
+        tabbedPane.addChangeListener(e -> {
+            if (tabbedPane.getSelectedComponent() == unitTypePanelComponent) {
+                SwingUtilities.invokeLater(unitTypePanel::setInitialFocus);
+            }
+        });
 
         // Add components to the main panel
         add(titlePanel, BorderLayout.NORTH);
