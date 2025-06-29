@@ -3,7 +3,11 @@ package View;
 import Controller.UnitType;
 
 import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -30,6 +34,10 @@ public class UnitTypePanel {
     private final JButton deleteUnitTypeButton;
     private final JLabel unitTypeMessageLabel;
     private static final JComboBox<String> unitTypeComboBox = new JComboBox<>();
+
+   public void setInitialFocus() {
+        unitTypeNameField.requestFocusInWindow();
+    }
 
     public JPanel getPanel() {
         return panel;
@@ -79,10 +87,26 @@ public class UnitTypePanel {
         searchPanel.setBackground(PANEL_BACKGROUND);
 
         searchField = createStyledTextField();
-        searchField.setToolTipText("Enter unit type name to search");
+        searchField.setToolTipText("<html>Enter unit type name to search<br>Press Enter to search<br>Press Ctrl+Enter to update<br>Press Shift+Enter to delete<br>Use Up/Down arrows to navigate between fields</html>");
         searchField.setPreferredSize(new Dimension(150, 30));
         // Add action listener to search field for the Enter key
         searchField.addActionListener(e -> searchUnitType());
+        // Add key listener for additional keyboard shortcuts
+        searchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isControlDown()) {
+                    updateUnitType();
+                } else if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isShiftDown()) {
+                    deleteUnitType();
+                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    // Skip ID field and go directly to name field
+                    unitTypeNameField.requestFocusInWindow();
+                } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    conversionRateField.requestFocusInWindow();
+                }
+            }
+        });
         searchPanel.add(searchField);
 
         JButton searchButton = createStyledButton("Search");
@@ -121,7 +145,24 @@ public class UnitTypePanel {
         formPanel.add(nameLabel, gbc);
 
         unitTypeNameField = createStyledTextField();
-        unitTypeNameField.setToolTipText("Enter the unit type name");
+        unitTypeNameField.requestFocusInWindow();
+        unitTypeNameField.setToolTipText("<html>Enter the unit type name<br>Press Enter to add a new unit type<br>Use Up/Down arrows to navigate between fields</html>");
+        unitTypeNameField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isControlDown()) {
+                    updateUnitType();
+                } else if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isShiftDown()) {
+                    deleteUnitType();
+                } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    addUnitType();
+                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    conversionRateField.requestFocusInWindow();
+                } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    searchField.requestFocusInWindow();
+                }
+            }
+        });
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(unitTypeNameField, gbc);
@@ -134,7 +175,23 @@ public class UnitTypePanel {
         formPanel.add(conversionLabel, gbc);
 
         conversionRateField = createStyledTextField();
-        conversionRateField.setToolTipText("Enter the conversion rate to base unit (numeric value)");
+        conversionRateField.setToolTipText("<html>Enter the conversion rate to base unit (numeric value)<br>Press Enter to add a new unit type<br>Use Up/Down arrows to navigate between fields</html>");
+        conversionRateField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isControlDown()) {
+                    updateUnitType();
+                } else if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isShiftDown()) {
+                    deleteUnitType();
+                } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    addUnitType();
+                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    searchField.requestFocusInWindow();
+                } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    unitTypeNameField.requestFocusInWindow();
+                }
+            }
+        });
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(conversionRateField, gbc);
@@ -294,6 +351,7 @@ public class UnitTypePanel {
                 showMessage("Unit Type added successfully!", "success");
                 clearUnitTypeFields();
                 unitTypeIdField.setText(getId());
+                unitTypeNameField.requestFocusInWindow();
             } catch (Exception ex) {
                 showMessage("Error adding unit type: " + ex.getMessage(), "error");
             } finally {
