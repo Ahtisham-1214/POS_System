@@ -234,6 +234,11 @@ public class DashboardPanel extends JPanel {
             } else {
                 cardLayout.show(contentPanel, cardName);
             }
+
+            if (text.equals("Sales")) {
+                    salesPanel.setInitialFocus();
+            }
+
         });
 
         panel.add(button);
