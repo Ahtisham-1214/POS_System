@@ -29,7 +29,7 @@ public class SalesPanel extends JPanel {
     private JLabel totalAmountLabel;
 
     // Data
-    private ArrayList<CartItem> cartItems;
+    private final ArrayList<CartItem> cartItems;
     private float totalAmount = 0.0f;
     private static int orderId = 1;
 
@@ -40,6 +40,9 @@ public class SalesPanel extends JPanel {
     private static final Color ERROR_COLOR = new Color(220, 53, 69); // Bootstrap danger red
 
 
+    public void setInitialFocus(){
+        productComboBox.requestFocusInWindow();
+    }
     public SalesPanel() {
         cartItems = new ArrayList<>();
         initializeUI();
@@ -178,7 +181,6 @@ public class SalesPanel extends JPanel {
         panel.add(productComboBox, gbc);
 
         // Product variant selection
-
         variantComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
         gbc.gridx = 2;
         gbc.anchor = GridBagConstraints.WEST;
@@ -186,7 +188,6 @@ public class SalesPanel extends JPanel {
 
         // Add listener to product combo box to update variants
         productComboBox.addActionListener(e -> updateVariantComboBox());
-
 
         quantityField = createStyledTextField();
         quantityField.setText("1");
@@ -202,6 +203,33 @@ public class SalesPanel extends JPanel {
         gbc.gridx = 4;
         gbc.anchor = GridBagConstraints.CENTER;
         panel.add(addToCartButton, gbc);
+
+        // Keyboard navigation: left/right arrow keys
+        productComboBox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_RIGHT) {
+                    variantComboBox.requestFocusInWindow();
+                }
+            }
+        });
+        variantComboBox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_RIGHT) {
+                    quantityField.requestFocusInWindow();
+                } else if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_LEFT) {
+                    productComboBox.requestFocusInWindow();
+                }
+            }
+        });
+        quantityField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                 if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_LEFT) {
+                     if (quantityField.getCaretPosition() == 0) {
+                         variantComboBox.requestFocusInWindow();
+                     }
+                }
+            }
+        });
 
         return panel;
     }
@@ -448,6 +476,7 @@ public class SalesPanel extends JPanel {
 
             // Reset customer field
             customerField.setText("");
+            searchField.setText("");
 
             showMessage("Order has been cancelled", "information");
         }
