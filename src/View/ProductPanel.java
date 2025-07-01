@@ -37,6 +37,9 @@ public class ProductPanel extends JPanel {
     private static final Color ERROR_COLOR = new Color(178, 34, 34); // Firebrick
     private static final Color PANEL_BACKGROUND = Color.WHITE;
 
+    public void setInitialFocus() {
+        SwingUtilities.invokeLater(() -> productIdField.requestFocusInWindow());
+    }
     public ProductPanel() {
         initializeUI();
         loadData();
