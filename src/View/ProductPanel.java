@@ -38,7 +38,7 @@ public class ProductPanel extends JPanel {
     private static final Color PANEL_BACKGROUND = Color.WHITE;
 
     public void setInitialFocus() {
-        SwingUtilities.invokeLater(() -> productIdField.requestFocusInWindow());
+        productNameField.requestFocusInWindow();
     }
     public ProductPanel() {
         initializeUI();
@@ -120,7 +120,9 @@ public class ProductPanel extends JPanel {
 
         tabbedPane.addTab("Unit Types", unitTypePanelComponent);
         tabbedPane.addChangeListener(e -> {
-            if (tabbedPane.getSelectedComponent() == unitTypePanelComponent) {
+            if (tabbedPane.getSelectedComponent() == productPanel)
+                SwingUtilities.invokeLater(this::setInitialFocus);
+            else if (tabbedPane.getSelectedComponent() == unitTypePanelComponent) {
                 SwingUtilities.invokeLater(unitTypePanel::setInitialFocus);
             }
         });
