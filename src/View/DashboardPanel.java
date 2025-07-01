@@ -231,6 +231,7 @@ public class DashboardPanel extends JPanel {
             // Show the corresponding panel
             if (text.equals("Inventory")) {
                 cardLayout.show(contentPanel, "inventory");
+                inventoryPanel.setInitialFocus();
             } else {
                 cardLayout.show(contentPanel, cardName);
             }
