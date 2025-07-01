@@ -6,6 +6,8 @@ import Controller.UnitType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -181,6 +183,21 @@ public class ProductPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(productNameField, gbc);
 
+        productNameField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                        addProduct();
+                    else if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+                        clearProductFields();
+                    else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+                        deleteProduct();
+                    } else if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isShiftDown()) {
+                        updateProduct();
+                    }
+            }
+        });
+
         // Category field
         JLabel categoryLabel = createStyledLabel("Category:");
         gbc.gridx = 0;
@@ -242,6 +259,8 @@ public class ProductPanel extends JPanel {
         clearProductButton.addActionListener(e -> clearProductFields());
 
         panel.add(formPanel, BorderLayout.CENTER);
+
+
         return panel;
     }
 
