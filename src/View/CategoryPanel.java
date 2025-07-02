@@ -4,6 +4,8 @@ import Controller.Category;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -82,6 +84,16 @@ public class CategoryPanel {
         searchField.setToolTipText("Enter category name to search");
         searchField.setPreferredSize(new Dimension(150, 30));
         // Add action listener to search field for the Enter key
+        searchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_DOWN)
+                    categoryNameField.requestFocusInWindow();
+                else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    searchCategory();
+                }
+            }
+        });
         searchField.addActionListener(e -> searchCategory());
         searchPanel.add(searchField);
 
@@ -120,6 +132,26 @@ public class CategoryPanel {
 
         categoryNameField = createStyledTextField();
         categoryNameField.setToolTipText("Enter the category name");
+        categoryNameField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_UP)
+                    searchField.requestFocusInWindow();
+                else if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isShiftDown()) {
+                    updateCategory();
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    addCategory();
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+                    deleteCategory();
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    clearCategoryFields();
+                }
+
+            }
+        });
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(categoryNameField, gbc);
