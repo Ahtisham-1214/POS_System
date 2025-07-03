@@ -110,8 +110,9 @@ public class ProductPanel extends JPanel {
 
         // Create a category panel
         // Category tab components
-        JPanel categoryPanel = new CategoryPanel().getPanel();
-        tabbedPane.addTab("Categories", categoryPanel);
+        CategoryPanel categoryPanel = new CategoryPanel();
+        JPanel categoryComponentPanel = categoryPanel.getPanel();
+        tabbedPane.addTab("Categories", categoryComponentPanel);
 
         // Create a unit type panel
         // Unit Type tab components
@@ -124,6 +125,9 @@ public class ProductPanel extends JPanel {
                 SwingUtilities.invokeLater(this::setInitialFocus);
             else if (tabbedPane.getSelectedComponent() == unitTypePanelComponent) {
                 SwingUtilities.invokeLater(unitTypePanel::setInitialFocus);
+            } else if (tabbedPane.getSelectedComponent() == categoryComponentPanel) {
+                SwingUtilities.invokeLater(categoryPanel::setInitialFocus);
+
             }
         });
 
