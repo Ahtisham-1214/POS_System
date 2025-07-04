@@ -152,7 +152,7 @@ public class UnitTypePanel {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isControlDown()) {
                     updateUnitType();
-                } else if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isShiftDown()) {
+                } else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
                     deleteUnitType();
                 } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     addUnitType();
@@ -181,7 +181,7 @@ public class UnitTypePanel {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isControlDown()) {
                     updateUnitType();
-                } else if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isShiftDown()) {
+                } else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
                     deleteUnitType();
                 } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     addUnitType();
